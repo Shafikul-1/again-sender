@@ -22,7 +22,7 @@ class MailSetupController extends Controller
      */
     public function create()
     {
-        //
+        return view('mail.mailSetup');
     }
 
     /**
@@ -33,7 +33,7 @@ class MailSetupController extends Controller
         $request->validate([
             'mail_transport' => 'required|string',
             'mail_host' => 'required|string',
-            'mail_port' => 'required|integer',
+            'mail_port' => 'required|numeric',
             'mail_username' => 'required|string',
             'mail_password' => 'required',
             'mail_encryption' => 'required|string',

@@ -10,6 +10,7 @@
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio"></script>
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -32,5 +33,7 @@
                 {{ $slot }}
             </main>
         </div>
+
+        <script src="https://kit.fontawesome.com/ed5a9b6893.js" crossorigin="anonymous"></script>
     </body>
 </html>
