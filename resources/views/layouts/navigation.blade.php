@@ -20,6 +20,10 @@
                         {{ __('Setup Mails') }}
                     </x-nav-link>
 
+                    <x-nav-link :href="route('sendingemails.index')" :active="request()->routeIs('sendingemails.index')">
+                        {{ __('Sending Emails') }}
+                    </x-nav-link>
+
                     <x-nav-link :href="route('user')" :active="request()->routeIs('user')">
                         {{ __('Profile Dashboard') }}
                     </x-nav-link>

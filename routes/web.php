@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\mail\MailSetupController;
+use App\Http\Controllers\mail\SendingEmailController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -37,6 +38,7 @@ Route::middleware('auth')->group(function () {
 
 
 Route::resource('mailsetup', MailSetupController::class)->middleware('auth');
+Route::resource('sendingemails', SendingEmailController::class)->middleware('auth');
 
 
 

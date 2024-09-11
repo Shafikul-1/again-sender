@@ -15,7 +15,7 @@ class SendingEmailController extends Controller
      */
     public function index()
     {
-        //
+        return view('mail.sendingEmails.all');
     }
 
     /**
@@ -23,7 +23,7 @@ class SendingEmailController extends Controller
      */
     public function create()
     {
-        //
+        return view('mail.sendingEmails.add');
     }
 
     /**
@@ -32,27 +32,29 @@ class SendingEmailController extends Controller
     public function store(Request $request)
     {
         $userId = Auth::user()->id;
+
+        // Validate inputs
         $request->validate([
             'mails' => 'required|string',
             'send_time' => 'required|string',
             'mail_subject' => 'required|string',
             'mail_body' => 'required|string',
-            'mail_files' => 'required|array',
-            'mail_files.*' => 'file|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048',
+            'mail_files' => 'nullable|array',
+            'mail_files.*' => 'file|mimes:jpg,jpeg,png,pdf,doc,docx|max:10100',
         ]);
 
+        // Handle file uploads
         $mailFileNames = [];
-        if($request->has('mail_files')){
-            $allFiles = $request->mail_files;
-            foreach($allFiles as $files){
+        if ($request->has('mail_files')) {
+            foreach ($request->mail_files as $files) {
                 $ext = $files->getClientOriginalExtension();
-                // $ext = $request->file('mail_files')->extension();
-                $rename = time() . '.' . $ext;
-                $files->move(public_path() . '/mailFile' , $rename);
+                $rename = time() . '_' . uniqid() . '.' . $ext;
+                $files->move(public_path() . '/mailFile', $rename);
                 $mailFileNames[] = $rename;
             }
         }
 
+        // Create mail content record
         $mailContent = MailContent::create([
             'mail_subject' => $request->mail_subject,
             'mail_body' => $request->mail_body,
@@ -60,13 +62,15 @@ class SendingEmailController extends Controller
             'user_id' => $userId,
         ]);
 
-        $sendingMails = explode(' ', $request->mails);
-        $filterEmails = array_filter($sendingMails, function($value){
-            return filter_var($value, FILTER_VALIDATE_EMAIL);  // Validate emails correctly
+        // Filter and validate emails
+        $sendingMails = preg_split('/[\s,]+/', $request->mails);
+        $filterEmails = array_filter($sendingMails, function ($value) {
+            return filter_var($value, FILTER_VALIDATE_EMAIL);
         });
 
+        // Prepare data for batch insertion
         $send_time = $request->send_time;
-        $sendingMail = array_map(function($data) use($mailContent,$send_time, $userId) {
+        $sendingMail = array_map(function ($data) use ($mailContent, $send_time, $userId) {
             return [
                 'mails' => $data,
                 'send_time' => $send_time,
@@ -75,13 +79,15 @@ class SendingEmailController extends Controller
             ];
         }, $filterEmails);
 
-       $batchSize = 20;
-       $chunks = array_chunk($sendingMail, $batchSize);
-       foreach($chunks as $chunk){
-        SendingEmail::insert($chunk);
-       }
+        // Batch insert emails
+        $batchSize = 20;
+        $chunks = array_chunk($sendingMail, $batchSize);
+        foreach ($chunks as $chunk) {
+            SendingEmail::insert($chunk);
+        }
 
-       return 'ok';
+        // Redirect after successful insert
+        return redirect()->route('sendingemails.index')->with('success', 'All Mail Added successfully');
     }
 
     /**
@@ -97,7 +103,7 @@ class SendingEmailController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        return view('mail.sendingEmails.edit');
     }
 
     /**
