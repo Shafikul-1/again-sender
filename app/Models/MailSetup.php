@@ -27,4 +27,8 @@ class MailSetup extends Model
         'profile_link',
         'user_id',
     ];
+
+    protected $casts = [
+        'other_links' => 'array'
+    ];
 }

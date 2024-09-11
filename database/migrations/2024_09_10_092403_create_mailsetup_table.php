@@ -21,13 +21,7 @@ return new class extends Migration
             $table->string('mail_encryption');
             $table->string('mail_from');
             $table->string('mail_sender_name');
-            $table->string('department');
-            $table->string('whatsapp_link')->nullable();
-            $table->text('instagram_link')->nullable();
-            $table->text('facebook_link')->nullable();
-            $table->text('linkdin_link')->nullable();
-            $table->string('website')->nullable();
-            $table->text('profile_link');
+            $table->json('other_links');
             $table->foreignId('user_id')->references('id')->on('users')->cascadeOnDelete();
             $table->timestamps();
         });

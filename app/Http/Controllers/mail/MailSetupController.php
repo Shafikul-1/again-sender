@@ -30,6 +30,7 @@ class MailSetupController extends Controller
      */
     public function store(Request $request)
     {
+        return $request;
         $request->validate([
             'mail_transport' => 'required|string',
             'mail_host' => 'required|string',
@@ -39,11 +40,6 @@ class MailSetupController extends Controller
             'mail_encryption' => 'required|string',
             'mail_from' => 'required|string',
             'mail_sender_name' => 'required|string',
-            'department' => 'required|string',
-            'whatsapp_link' => 'required|string',
-            'instagram_link' => 'required|string',
-            'website' => 'required|string',
-            'profile_link' => 'required|string',
         ]);
 
         MailSetup::create([
@@ -55,11 +51,6 @@ class MailSetupController extends Controller
             'mail_encryption' => $request->mail_encryption,
             'mail_from' => $request->mail_from,
             'mail_sender_name' => $request->mail_sender_name,
-            'department' => $request->department,
-            'whatsapp_link' => $request->whatsapp_link,
-            'instagram_link' => $request->instagram_link,
-            'website' => $request->website,
-            'profile_link' => $request->profile_link,
             'user_id' => Auth::user()->id,
         ]);
 

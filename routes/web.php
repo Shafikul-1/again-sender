@@ -36,7 +36,7 @@ Route::middleware('auth')->group(function () {
 });
 
 
-Route::resource('mailsetup', MailSetupController::class);
+Route::resource('mailsetup', MailSetupController::class)->middleware('auth');
 
 
 

@@ -15,6 +15,14 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+
+                    <x-nav-link :href="route('mailsetup.create')" :active="request()->routeIs('mailsetup.create')">
+                        {{ __('Setup Mail') }}
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('user')" :active="request()->routeIs('user')">
+                        {{ __('Profile Dashboard') }}
+                    </x-nav-link>
                 </div>
             </div>
 

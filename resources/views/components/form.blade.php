@@ -1,6 +1,6 @@
 {{-- resources/views/components/form.blade.php --}}
 @props([
-    'submit',              // Submit button text or content
+    'submit' => '',              // Submit button text or content
     'action',              // Form action URL
     'method' => 'POST',    // Form method
     'fields' => [],        // Form fields
