@@ -18,13 +18,7 @@ class MailSetup extends Model
         'mail_encryption',
         'mail_from',
         'mail_sender_name',
-        'department',
-        'whatsapp_link',
-        'instagram_link',
-        'facebook_link',
-        'linkdin_link',
-        'website',
-        'profile_link',
+        'other_links',
         'user_id',
     ];
 

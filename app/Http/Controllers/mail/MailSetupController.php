@@ -30,7 +30,6 @@ class MailSetupController extends Controller
      */
     public function store(Request $request)
     {
-        return $request;
         $request->validate([
             'mail_transport' => 'required|string',
             'mail_host' => 'required|string',
@@ -42,6 +41,9 @@ class MailSetupController extends Controller
             'mail_sender_name' => 'required|string',
         ]);
 
+        $otherLinks = $request->other_links;
+        $otherLink = json_decode($otherLinks, true);
+
         MailSetup::create([
             'mail_transport' => $request->mail_transport,
             'mail_host' => $request->mail_host,
@@ -51,6 +53,7 @@ class MailSetupController extends Controller
             'mail_encryption' => $request->mail_encryption,
             'mail_from' => $request->mail_from,
             'mail_sender_name' => $request->mail_sender_name,
+            'other_links' => $otherLink,
             'user_id' => Auth::user()->id,
         ]);
 
@@ -94,7 +97,7 @@ class MailSetupController extends Controller
             'profile_link' => 'required|string',
         ]);
 
-      $updateMail =  MailSetup::where('id', $id)->update([
+        $updateMail =  MailSetup::where('id', $id)->update([
             'mail_transport' => $request->mail_transport,
             'mail_host' => $request->mail_host,
             'mail_port' => $request->mail_port,
