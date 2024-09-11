@@ -16,8 +16,8 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
-                    <x-nav-link :href="route('mailsetup.create')" :active="request()->routeIs('mailsetup.create')">
-                        {{ __('Setup Mail') }}
+                    <x-nav-link :href="route('mailsetup.index')" :active="request()->routeIs('mailsetup.create')">
+                        {{ __('Setup Mails') }}
                     </x-nav-link>
 
                     <x-nav-link :href="route('user')" :active="request()->routeIs('user')">

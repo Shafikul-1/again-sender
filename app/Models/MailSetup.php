@@ -19,6 +19,9 @@ class MailSetup extends Model
         'mail_from',
         'mail_sender_name',
         'other_links',
+        'sender_company_logo',
+        'sender_website',
+        'sender_number',
         'user_id',
     ];
 

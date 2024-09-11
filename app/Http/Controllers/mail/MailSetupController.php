@@ -14,7 +14,8 @@ class MailSetupController extends Controller
      */
     public function index()
     {
-        //
+        $allEmail = MailSetup::where('user_id', Auth::user()->id)->paginate(10);
+        return view('mail.setup.all', compact('allEmail'));
     }
 
     /**
@@ -22,7 +23,7 @@ class MailSetupController extends Controller
      */
     public function create()
     {
-        return view('mail.mailSetup');
+        return view('mail.setup.mailSetup');
     }
 
     /**
@@ -35,7 +36,7 @@ class MailSetupController extends Controller
             'mail_host' => 'required|string',
             'mail_port' => 'required|numeric',
             'mail_username' => 'required|string',
-            'mail_password' => 'required',
+            'mail_password' => 'required|string',
             'mail_encryption' => 'required|string',
             'mail_from' => 'required|string',
             'mail_sender_name' => 'required|string',
@@ -44,20 +45,30 @@ class MailSetupController extends Controller
         $otherLinks = $request->other_links;
         $otherLink = json_decode($otherLinks, true);
 
-        MailSetup::create([
+        if ($request->sender_number) {
+            $request->validate([
+                'sender_number' => 'required|digits:11',
+            ]);
+        }
+
+        $mailPass =  str_replace(' ', '', $request->mail_password);
+        $insertData =  MailSetup::create([
             'mail_transport' => $request->mail_transport,
             'mail_host' => $request->mail_host,
             'mail_port' => $request->mail_port,
             'mail_username' => $request->mail_username,
-            'mail_password' => $request->mail_password,
+            'mail_password' => $mailPass,
             'mail_encryption' => $request->mail_encryption,
             'mail_from' => $request->mail_from,
             'mail_sender_name' => $request->mail_sender_name,
             'other_links' => $otherLink,
+            'sender_company_logo' => $request->sender_company_logo,
+            'sender_website' => $request->sender_website,
+            'sender_number' => $request->sender_number,
             'user_id' => Auth::user()->id,
         ]);
 
-        return 'ok';
+        return $insertData ? redirect()->route('mailsetup.index')->with('success', 'Mail Added Successful') :  redirect()->back()->with('error', 'someting went wrong');
     }
 
     /**
@@ -73,7 +84,9 @@ class MailSetupController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $editData = MailSetup::find($id);
+        // return $editData;
+        return view('mail.setup.edit', compact('editData'));
     }
 
     /**
@@ -84,36 +97,40 @@ class MailSetupController extends Controller
         $request->validate([
             'mail_transport' => 'required|string',
             'mail_host' => 'required|string',
-            'mail_port' => 'required|integer',
+            'mail_port' => 'required|numeric',
             'mail_username' => 'required|string',
-            'mail_password' => 'required',
+            'mail_password' => 'required|string',
             'mail_encryption' => 'required|string',
             'mail_from' => 'required|string',
             'mail_sender_name' => 'required|string',
-            'department' => 'required|string',
-            'whatsapp_link' => 'required|string',
-            'instagram_link' => 'required|string',
-            'website' => 'required|string',
-            'profile_link' => 'required|string',
         ]);
 
+        $otherLinks = $request->other_links;
+        $otherLink = json_decode($otherLinks, true);
+
+        if ($request->sender_number) {
+            $request->validate([
+                'sender_number' => 'required|digits:11',
+            ]);
+        }
+
+        $mailPass =  str_replace(' ', '', $request->mail_password);
         $updateMail =  MailSetup::where('id', $id)->update([
             'mail_transport' => $request->mail_transport,
             'mail_host' => $request->mail_host,
             'mail_port' => $request->mail_port,
             'mail_username' => $request->mail_username,
-            'mail_password' => $request->mail_password,
+            'mail_password' => $mailPass,
             'mail_encryption' => $request->mail_encryption,
             'mail_from' => $request->mail_from,
             'mail_sender_name' => $request->mail_sender_name,
-            'department' => $request->department,
-            'whatsapp_link' => $request->whatsapp_link,
-            'instagram_link' => $request->instagram_link,
-            'website' => $request->website,
-            'profile_link' => $request->profile_link,
+            'other_links' => $otherLink,
+            'sender_company_logo' => $request->sender_company_logo,
+            'sender_website' => $request->sender_website,
+            'sender_number' => $request->sender_number,
         ]);
 
-        return 'ok';
+        return $updateMail ? redirect()->route('mailsetup.index')->with('success', 'Mail Added Successful') :  redirect()->back()->with('error', 'someting went wrong');
     }
 
     /**
