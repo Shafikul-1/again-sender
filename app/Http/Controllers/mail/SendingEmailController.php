@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\mail;
 
+use Carbon\Carbon;
 use App\Models\MailContent;
 use App\Models\SendingEmail;
 use Illuminate\Http\Request;
@@ -15,7 +16,7 @@ class SendingEmailController extends Controller
      */
     public function index()
     {
-        $sendingEmails = SendingEmail::with('mail_content')->where('user_id', Auth::user()->id)->paginate(10);
+        $sendingEmails = SendingEmail::with('mail_content')->where('user_id', Auth::user()->id)->orderByDesc('id')->paginate(10);
         return view('mail.sendingEmails.all', compact('sendingEmails'));
     }
 
@@ -42,6 +43,7 @@ class SendingEmailController extends Controller
             'mail_body' => 'required|string',
             'mail_files' => 'nullable|array',
             'mail_files.*' => 'file|mimes:jpg,jpeg,png,pdf,doc,docx|max:10100',
+            'schedule_time' => ['required', 'regex:/^(\d+(\|\d+)*)?$/'],
         ]);
         // return $request;
 
@@ -72,10 +74,14 @@ class SendingEmailController extends Controller
 
         // Prepare data for batch insertion
         $send_time = $request->send_time;
-        $sendingMail = array_map(function ($data) use ($mailContent, $send_time, $userId) {
+        $schedule_time = explode('|', $request->schedule_time);
+        // $randomMinute = $schedule_time[array_rand($schedule_time)];
+        $sendingMail = array_map(function ($data) use ($mailContent, $send_time, $userId, $schedule_time) {
+            $randomMinute = $schedule_time[array_rand($schedule_time)];
+            $newTime = Carbon::parse($send_time)->addMinutes((int)$randomMinute);
             return [
                 'mails' => $data,
-                'send_time' => $send_time,
+                'send_time' => $newTime,
                 'mail_content_id' => $mailContent->id,
                 'user_id' => $userId,
             ];
