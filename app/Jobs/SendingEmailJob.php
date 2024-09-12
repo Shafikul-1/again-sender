@@ -45,7 +45,7 @@ class SendingEmailJob implements ShouldQueue
                 ],
                 'mail.form.' => [
                     'address' => $mailConfigData->mail_from,
-                    'name' => $mailConfigData->mail_sender_name,
+                    'name' => 'Yousuf Ali',
                 ],
             ]);
 
