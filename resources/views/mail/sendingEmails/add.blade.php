@@ -96,6 +96,16 @@
             ]
         ]"
         class="space-y-6 font-[sans-serif] text-[#333] max-w-md mx-auto submitForm" enctype="multipart/form-data">
+        <select name="mail_form" id="mail_form">
+            <option disabled selected value="">No Select Sending Email</option>
+            @foreach ($userSetupEmails as $emails)
+                <option value="{{ $emails }}">{{ $emails }}</option>
+            @endforeach
+        </select>
+        <br>
+        @error('mail_form')
+            <p class="text-red-500">{{ $message }}</p>
+        @enderror
     </x-form>
 </x-app-layout>
 <script>
@@ -103,8 +113,10 @@
         if (!document.getElementById('timeInfo')) {
             var newElement = document.createElement('span');
             newElement.id = 'timeInfo';
-            newElement.className = 'dark:text-white text-sm absolute top-[-4rem] left-6 max-w-full bg-gray-700 rounded-md shadow-lg shadow-fuchsia-600 text-center py-1 px-2';
-            newElement.innerHTML = 'input only use time <b>number</b> no space<br> If you want random time, then use <span class="font-bold text-blue-400">|</span> add minute';
+            newElement.className =
+                'dark:text-white text-sm absolute top-[-4rem] left-6 max-w-full bg-gray-700 rounded-md shadow-lg shadow-fuchsia-600 text-center py-1 px-2';
+            newElement.innerHTML =
+                'input only use time <b>number</b> no space<br> If you want random time, then use <span class="font-bold text-blue-400">|</span> add minute';
 
             this.parentNode.appendChild(newElement);
         }

@@ -13,6 +13,7 @@ class SendingEmail extends Model
         'mails',
         'send_time',
         'status',
+        'mail_form',
         'mail_content_id',
         'user_id',
     ];

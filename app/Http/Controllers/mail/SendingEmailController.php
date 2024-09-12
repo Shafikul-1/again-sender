@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers\mail;
 
+use Throwable;
 use Carbon\Carbon;
+use App\Models\MailSetup;
 use App\Models\MailContent;
 use App\Models\SendingEmail;
 use Illuminate\Http\Request;
+use App\Jobs\SendingEmailJob;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,7 +20,7 @@ class SendingEmailController extends Controller
      */
     public function index()
     {
-        $sendingEmails = SendingEmail::with('mail_content')->where('user_id', Auth::user()->id)->orderByDesc('id')->paginate(10);
+        $sendingEmails = SendingEmail::with('mail_content')->where('user_id', Auth::user()->id)->orderByDesc('id')->paginate(25);
         return view('mail.sendingEmails.all', compact('sendingEmails'));
     }
 
@@ -25,7 +29,8 @@ class SendingEmailController extends Controller
      */
     public function create()
     {
-        return view('mail.sendingEmails.add');
+        $userSetupEmails = MailSetup::pluck('mail_username');
+        return view('mail.sendingEmails.add', compact('userSetupEmails'));
     }
 
     /**
@@ -41,11 +46,11 @@ class SendingEmailController extends Controller
             'send_time' => 'required|string',
             'mail_subject' => 'required|string',
             'mail_body' => 'required|string',
+            'mail_form' => 'required|string|not_in:""',
             'mail_files' => 'nullable|array',
             'mail_files.*' => 'file|mimes:jpg,jpeg,png,pdf,doc,docx|max:10100',
             'schedule_time' => ['required', 'regex:/^(\d+(\|\d+)*)?$/'],
         ]);
-        // return $request;
 
         // Handle file uploads
         $mailFileNames = [];
@@ -74,15 +79,19 @@ class SendingEmailController extends Controller
 
         // Prepare data for batch insertion
         $send_time = $request->send_time;
+        $mail_form = $request->mail_form;
         $schedule_time = explode('|', $request->schedule_time);
         // $randomMinute = $schedule_time[array_rand($schedule_time)];
-        $sendingMail = array_map(function ($data) use ($mailContent, $send_time, $userId, $schedule_time) {
+        $sendingMail = array_map(function ($data) use ($mailContent, $send_time, $userId, $schedule_time, $mail_form) {
             $randomMinute = $schedule_time[array_rand($schedule_time)];
             $newTime = Carbon::parse($send_time)->addMinutes((int)$randomMinute);
             return [
                 'mails' => $data,
                 'send_time' => $newTime,
+                'mail_form' => $mail_form,
                 'mail_content_id' => $mailContent->id,
+                'created_at' => now(),
+                'updated_at' => now(),
                 'user_id' => $userId,
             ];
         }, $filterEmails);
@@ -131,5 +140,39 @@ class SendingEmailController extends Controller
     {
         $deleteSendingEmail = SendingEmail::find($id)->delete();
         return $deleteSendingEmail ? redirect()->back()->with('success', 'Mail Delete successful') :  redirect()->back()->with('error', 'someting went wrong');
+    }
+
+    /**
+     * Current time less then equal `>=` all waiting sent emails add SendingEmailJob table
+     */
+    public function sendingEmails()
+    {
+        $currentTime = Carbon::now();
+        $allEmails = SendingEmail::with('mail_content')->where('send_time', '<=', $currentTime)->where('status', 'noaction')->get();
+        // return $allEmails;
+        try {
+            if ($allEmails->isNotEmpty()) {
+                SendingEmailJob::dispatch($allEmails);
+                // Bulk update status to 'pending'
+                $emailIds = $allEmails->pluck('id');
+                SendingEmail::whereIn('id', $emailIds)->update(['status' => 'pending']);
+                return "ok";
+            }
+        } catch (Throwable $th) {
+            Log::error("Email Dispatch Error SendingEmailController => " . $th->getMessage());
+        }
+
+
+        // SendingEmail::with('mail_content')
+        //     ->where('send_time', '<=', $currentTime)
+        //     ->where('status', 'noaction')
+        //     ->chunk(100, function ($emails) {
+        //         // Dispatch job for each chunk
+        //         SendingEmailJob::dispatch($emails);
+
+        //         // Bulk update status for each chunk
+        //         $emailIds = $emails->pluck('id');
+        //         SendingEmail::whereIn('id', $emailIds)->update(['status' => 'pending']);
+        //     });
     }
 }
