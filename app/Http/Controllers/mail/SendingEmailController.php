@@ -15,7 +15,8 @@ class SendingEmailController extends Controller
      */
     public function index()
     {
-        return view('mail.sendingEmails.all');
+        $sendingEmails = SendingEmail::with('mail_content')->where('user_id', Auth::user()->id)->paginate(10);
+        return view('mail.sendingEmails.all', compact('sendingEmails'));
     }
 
     /**
@@ -42,6 +43,7 @@ class SendingEmailController extends Controller
             'mail_files' => 'nullable|array',
             'mail_files.*' => 'file|mimes:jpg,jpeg,png,pdf,doc,docx|max:10100',
         ]);
+        // return $request;
 
         // Handle file uploads
         $mailFileNames = [];
@@ -103,7 +105,9 @@ class SendingEmailController extends Controller
      */
     public function edit(string $id)
     {
-        return view('mail.sendingEmails.edit');
+        $sendingEmails = SendingEmail::with('mail_content')->find($id);
+        // return $sendingEmails;
+        return view('mail.sendingEmails.edit', compact('sendingEmails'));
     }
 
     /**

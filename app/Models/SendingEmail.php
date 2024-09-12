@@ -16,4 +16,16 @@ class SendingEmail extends Model
         'mail_content_id',
         'user_id',
     ];
+
+    /**
+     * The roles that belong to the SendingEmail
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\hasMany
+     */
+    public function mail_content()
+    {
+        return $this->hasMany(MailContent::class, 'id', 'mail_content_id');
+    }
+
+
 }

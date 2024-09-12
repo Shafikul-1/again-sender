@@ -73,18 +73,6 @@
                 'class' => $inputAttributeClass,
                 'multiple' => 'multiple',
             ],
-        ],[
-            'type' => 'number',
-            'name' => 'schedule_time',
-            'id' => 'schedule_time',
-            'placeholder' => 'Enter your schedule_time',
-            'errorClass' => $errorClass,
-            'wrapper' => [
-                'class' => $wrapper,
-            ],
-            'attributes' => [
-                'class' => $inputAttributeClass,
-            ],
         ],
     ]"
         :submit="[
@@ -94,6 +82,20 @@
             ]
         ]"
         class="space-y-6 font-[sans-serif] text-[#333] max-w-md mx-auto submitForm" enctype="multipart/form-data">
+
+        <div class="relative items-center">
+            <div class="flex justify-between">
+                <label for="schedule_time" class="dark:text-white">Schedule Time</label>
+                <div class="flex gap-2 ">
+                    <input type="checkbox" name="random_time" id="random_time">
+                    <span class="dark:text-white">Random Time</span>
+                </div>
+            </div>
+            <input type="number" name="schedule_time" id="schedule_time" class="px-4 py-3 bg-[#f0f1f2] focus:bg-transparent w-full text-sm border outline-[#007bff] rounded transition-all dark:focus:text-white" value="{{ old('schedule_time') }}">
+            @error('schedule_time')
+                <p class="mt-[4rem] text-sm absolute left-0 w-full">{{ $message }}</p>
+            @enderror
+        </div>
 
     </x-form>
 </x-app-layout>
