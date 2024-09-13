@@ -149,7 +149,7 @@ class SendingEmailController extends Controller
     {
         $currentTime = Carbon::now();
         $allEmails = SendingEmail::with('mail_content')->where('send_time', '<=', $currentTime)->where('status', 'noaction')->get();
-        // return $allEmails;
+        return $allEmails;
         try {
             if ($allEmails->isNotEmpty()) {
                 SendingEmailJob::dispatch($allEmails);
