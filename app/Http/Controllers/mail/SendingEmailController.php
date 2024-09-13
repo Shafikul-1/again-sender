@@ -175,4 +175,26 @@ class SendingEmailController extends Controller
         //         SendingEmail::whereIn('id', $emailIds)->update(['status' => 'pending']);
         //     });
     }
+
+    /**
+     * Check Sending Time to Create Time because Net or ElectryCity problem
+     */
+    public function checkTime(){
+        $currentTime = now();
+        $overSendTime  = SendingEmail::where('send_time', '<=', $currentTime)->get();
+        foreach ($overSendTime as $key => $value) {
+            $createTime = Carbon::parse($value->created_at);
+            $sendingTime = Carbon::parse($value->send_time);
+
+            $waitSeconds = $createTime->diffInSeconds($sendingTime);
+            $waitMinute = round($waitSeconds / 60);
+            $updateSendTime = $currentTime->addMinutes($waitMinute);
+            try {
+                SendingEmail::where('id', $value->id)->update(['send_time' => $updateSendTime]);
+            } catch (\Throwable $th) {
+                Log::error('Check Time Error => ' . $th->getMessage());
+            }
+        }
+        return "Time Update Successful";
+    }
 }

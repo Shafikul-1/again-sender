@@ -1,74 +1,96 @@
 <x-app-layout>
-    <a href="{{ route('sendingemails.create') }}" class="px-5 py-2.5 rounded-lg text-sm tracking-wider font-medium border border-current outline-none bg-blue-700 hover:bg-transparent text-white hover:text-blue-700 transition-all duration-300">Add Mails</a>
 
-    <div class="overflow-x-auto font-[sans-serif] bg-gray-900 text-gray-200 mt-5">
-        <table class="min-w-full bg-gray-800 border border-gray-700">
-            <thead class="whitespace-nowrap">
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-5">
+        <div class="flex flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4">
+            <div>
+                <a href="{{ route('sendingemails.create') }}" class="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">Add Mails</a>
+            </div>
+            <label for="table-search" class="sr-only">Search</label>
+            <div class="relative">
+                <div
+                    class="absolute inset-y-0 left-0 rtl:inset-r-0 rtl:right-0 flex items-center ps-3 pointer-events-none">
+                    <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" aria-hidden="true" fill="currentColor"
+                        viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                            d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+                <input type="text" id="table-search"
+                    class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Search for items">
+            </div>
+        </div>
+        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
-                    <th class="pl-4 bg-blue-900">
-                        <input id="checkbox" type="checkbox" class="hidden peer" />
-                        <label for="checkbox"
-                            class="relative flex items-center justify-center p-0.5 peer-checked:before:hidden before:block before:absolute before:w-full before:h-full before:bg-gray-600 w-5 h-5 cursor-pointer bg-blue-800 border border-gray-600 rounded overflow-hidden transition-transform duration-300 transform hover:scale-105">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-full fill-white" viewBox="0 0 520 520">
-                                <path
-                                    d="M79.423 240.755a47.529 47.529 0 0 0-36.737 77.522l120.73 147.894a43.136 43.136 0 0 0 36.066 16.009c14.654-.787 27.884-8.626 36.319-21.515L486.588 56.773a6.13 6.13 0 0 1 .128-.2c2.353-3.613 1.59-10.773-3.267-15.271a13.321 13.321 0 0 0-19.362 1.343q-.135.166-.278.327L210.887 328.736a10.961 10.961 0 0 1-15.585.843l-83.94-76.386a47.319 47.319 0 0 0-31.939-12.438z"
-                                    data-name="7-Check" data-original="#000000" />
-                            </svg>
-                        </label>
+                    <th scope="col" class="p-4">
+                        <div class="flex items-center">
+                            <input id="checkbox-all-search" type="checkbox"
+                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <label for="checkbox-all-search" class="sr-only">checkbox</label>
+                        </div>
                     </th>
-                    <th class="p-4 text-sm font-semibold bg-blue-900 text-white text-center capitalize">
-                        Email
+                    <th scope="col" class="px-6 py-3">
+                        From
                     </th>
-                    <th class="p-4 text-sm font-semibold bg-red-700 text-white text-center capitalize">
+                    <th scope="col" class="px-6 py-3">
+                        To
+                    </th>
+                    <th scope="col" class="px-6 py-3">
                         send time
                     </th>
-                    <th class="p-4 text-sm font-semibold bg-green-700 text-white text-center capitalize">
+                    <th scope="col" class="px-6 py-3">
                         status
                     </th>
-                    <th class="p-4 text-sm font-semibold bg-yellow-700 text-white text-center capitalize">
-                         subject
+                    <th scope="col" class="px-6 py-3">
+                        subject
                     </th>
-                    <th class="p-4 text-sm font-semibold bg-purple-700 text-white text-center capitalize">
-                         body
+                    <th scope="col" class="px-6 py-3">
+                        body
                     </th>
-                    <th class="p-4 text-sm font-semibold bg-cyan-600 text-white text-center  capitalize">
+                    <th scope="col" class="px-6 py-3">
                         Action
                     </th>
                 </tr>
             </thead>
-
-            <tbody class="whitespace-nowrap divide-y divide-gray-700">
+            <tbody>
                 @foreach ($sendingEmails as $email)
-                    <tr class="hover:bg-gray-700 transition-colors duration-300">
-                        <td class="pl-4 w-8">
-                            <input id="checkbox1" type="checkbox" class="hidden peer" />
-                            <label for="checkbox1"
-                                class="relative flex items-center justify-center p-0.5 peer-checked:before:hidden before:block before:absolute before:w-full before:h-full before:bg-gray-600 w-5 h-5 cursor-pointer bg-blue-800 border border-gray-600 rounded overflow-hidden transition-transform duration-300 transform hover:scale-105">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-full fill-white" viewBox="0 0 520 520">
-                                    <path
-                                        d="M79.423 240.755a47.529 47.529 0 0 0-36.737 77.522l120.73 147.894a43.136 43.136 0 0 0 36.066 16.009c14.654-.787 27.884-8.626 36.319-21.515L486.588 56.773a6.13 6.13 0 0 1 .128-.2c2.353-3.613 1.59-10.773-3.267-15.271a13.321 13.321 0 0 0-19.362 1.343q-.135.166-.278.327L210.887 328.736a10.961 10.961 0 0 1-15.585.843l-83.94-76.386a47.319 47.319 0 0 0-31.939-12.438z"
-                                        data-name="7-Check" data-original="#000000" />
-                                </svg>
-                            </label>
+                    <tr
+                        class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                        <td class="w-4 p-4">
+                            <div class="flex items-center">
+                                <input id="checkbox-table-search-1" type="checkbox"
+                                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                <label for="checkbox-table-search-1" class="sr-only">checkbox</label>
+                            </div>
                         </td>
-                        <td class="text-gray-300 text-center p-4 text-sm">
+                        <th scope="row"
+                            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            {{ $email->mail_form }}
+                        </th>
+                        <th scope="row"
+                            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             {{ $email->mails }}
-                        </td>
-                        <td class="text-gray-300 text-center p-4 text-sm">
+                        </th>
+                        <td class="px-6 py-4">
                             {{ $email->send_time }}
                         </td>
-                        <td class="text-center p-4 text-xs">
+                        <td class="px-6 py-4">
                             {{ $email->status }}
                         </td>
-                        <td class="text-center p-4 text-xs">
-                            {{ $email->mail_content[0]['mail_subject'] }}
+                        <td class="px-6 py-4">
+                            <div class="w-[150px] whitespace-nowrap overflow-hidden text-ellipsis">
+                                {{ $email->mail_content[0]['mail_subject'] }}
+                            </div>
                         </td>
-                        <td class="text-center p-4 flex items-center">
-                            {{ strip_tags($email->mail_content[0]['mail_body']) }}
+                        <td class="px-6 py-4 ">
+                            <div class="w-[150px] whitespace-nowrap overflow-hidden text-ellipsis">
+                                {{ strip_tags($email->mail_content[0]['mail_body']) }}
+                            </div>
                         </td>
-
                         {{-- Action --}}
-                        <td class="">
+                        <td class="px-6 py-4">
                             <div class="flex gap-4 justify-center">
                                 <a href="{{ route('sendingemails.edit', $email->id) }}" class="mr-4" title="Edit">
                                     <svg xmlns="http://www.w3.org/2000/svg"
@@ -98,9 +120,9 @@
                         </td>
                     </tr>
                 @endforeach
-
             </tbody>
         </table>
         {{ $sendingEmails->links() }}
     </div>
+
 </x-app-layout>
