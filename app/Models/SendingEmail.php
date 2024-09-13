@@ -15,6 +15,7 @@ class SendingEmail extends Model
         'status',
         'mail_form',
         'mail_content_id',
+        'wait_minute',
         'user_id',
     ];
 

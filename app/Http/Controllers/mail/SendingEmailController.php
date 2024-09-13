@@ -88,6 +88,7 @@ class SendingEmailController extends Controller
             return [
                 'mails' => $data,
                 'send_time' => $newTime,
+                'wait_minute' => (int)$randomMinute,
                 'mail_form' => $mail_form,
                 'mail_content_id' => $mailContent->id,
                 'created_at' => now(),
@@ -179,18 +180,13 @@ class SendingEmailController extends Controller
     /**
      * Check Sending Time to Create Time because Net or ElectryCity problem
      */
-    public function checkTime(){
+    public function checkTime()
+    {
         $currentTime = now();
         $overSendTime  = SendingEmail::where('send_time', '<=', $currentTime)->get();
         foreach ($overSendTime as $key => $value) {
-            $createTime = Carbon::parse($value->created_at);
-            $sendingTime = Carbon::parse($value->send_time);
-
-            $waitSeconds = $createTime->diffInSeconds($sendingTime);
-            $waitMinute = round($waitSeconds / 60);
-            $updateSendTime = $currentTime->addMinutes($waitMinute);
             try {
-                SendingEmail::where('id', $value->id)->update(['send_time' => $updateSendTime]);
+                SendingEmail::where('id', $value->id)->update(['send_time' => $currentTime->addMinutes($value->wait_minute)]);
             } catch (\Throwable $th) {
                 Log::error('Check Time Error => ' . $th->getMessage());
             }
