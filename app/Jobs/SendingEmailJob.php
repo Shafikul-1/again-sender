@@ -47,13 +47,13 @@ class SendingEmailJob implements ShouldQueue
                 ],
                 'mail.from' => [
                     'address' => $mailConfigData->mail_from,
-                    'name' => $mailConfigData->mail_sender_name, // This is now correctly set
+                    'name' => $mailConfigData->mail_sender_name,
                 ],
             ]);
 
             $status = false;
             try {
-                Mail::to($emails->mails)->send(new SendingEmailMail($emails->mail_content[0]));
+                Mail::to($emails->mails)->send(new SendingEmailMail($emails->mail_content[0], $mailConfigData->mail_sender_name, $mailConfigData->mail_from, $mailConfigData->sender_number, $mailConfigData->sender_website, $mailConfigData->other_links));
                 $status = true;
             } catch (Throwable $e) {
                 $status = false;
@@ -67,7 +67,7 @@ class SendingEmailJob implements ShouldQueue
                 'status' => $status ? 'success' : 'fail',
                 'user_id' => $emails->user_id,
             ]);
-            SendingEmail::find($emails->id)->delete();
+            // SendingEmail::find($emails->id)->delete();
         }
     }
 }

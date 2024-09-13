@@ -41,7 +41,7 @@ Route::resource('mailsetup', MailSetupController::class)->middleware('auth');
 Route::resource('sendingemails', SendingEmailController::class)->middleware('auth');
 
 
-Route::get('check', [SendingEmailController::class, 'checkTime']);
+Route::get('check', [SendingEmailController::class, 'sendingEmails']);
 
 
 require __DIR__.'/auth.php';
