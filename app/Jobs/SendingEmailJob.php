@@ -67,7 +67,7 @@ class SendingEmailJob implements ShouldQueue
                 'status' => $status ? 'success' : 'fail',
                 'user_id' => $emails->user_id,
             ]);
-            // SendingEmail::find($emails->id)->delete();
+            SendingEmail::find($emails->id)->delete();
         }
     }
 }
