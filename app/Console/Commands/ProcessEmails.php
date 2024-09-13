@@ -2,8 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Controllers\mail\SendingEmailController;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\mail\SendingEmailController;
 
 class ProcessEmails extends Command
 {
@@ -28,7 +29,6 @@ class ProcessEmails extends Command
     {
         $getEmails = new SendingEmailController();
         $addEmails = $getEmails->sendingEmails();
-
         $this->info($addEmails);
     }
 }

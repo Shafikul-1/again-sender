@@ -4,7 +4,9 @@ namespace App\Jobs;
 
 use Throwable;
 use App\Models\MailSetup;
+use App\Models\SendingEmail;
 use App\Mail\SendingEmailMail;
+use App\Models\MailDelivaryDetail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Queue\SerializesModels;
@@ -34,7 +36,7 @@ class SendingEmailJob implements ShouldQueue
         foreach ($this->sendingEmails as $emails) {
             $mailConfigData = MailSetup::where('mail_username', $emails->mail_form)->first();
             config([
-                'mail.default' => $mailConfigData->mail_transport, // ডাইনামিক ভাবে transport সেট হচ্ছে
+                'mail.default' => $mailConfigData->mail_transport,
                 'mail.mailers.' . $mailConfigData->mail_transport => [
                     'transport' => $mailConfigData->mail_transport,
                     'host' => $mailConfigData->mail_host,
@@ -43,17 +45,29 @@ class SendingEmailJob implements ShouldQueue
                     'password' => $mailConfigData->mail_password,
                     'encryption' => $mailConfigData->mail_encryption,
                 ],
-                'mail.form.' => [
+                'mail.from' => [
                     'address' => $mailConfigData->mail_from,
-                    'name' => 'Yousuf Ali',
+                    'name' => $mailConfigData->mail_sender_name, // This is now correctly set
                 ],
             ]);
 
-            try{
+            $status = false;
+            try {
                 Mail::to($emails->mails)->send(new SendingEmailMail($emails->mail_content[0]));
-            } catch(Throwable $e){
+                $status = true;
+            } catch (Throwable $e) {
+                $status = false;
                 Log::error('Queue Work Error => ' . $e->getMessage());
             }
+
+            // Delete Sending Emails
+            MailDelivaryDetail::create([
+                'sender' => $mailConfigData->mail_username,
+                'receiver' => $emails->mails,
+                'status' => $status ? 'success' : 'fail',
+                'user_id' => $emails->user_id,
+            ]);
+            SendingEmail::find($emails->id)->delete();
         }
     }
 }
