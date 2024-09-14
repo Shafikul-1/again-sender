@@ -42,7 +42,9 @@ Route::resource('mailsetup', MailSetupController::class)->middleware('auth');
 Route::resource('sendingemails', SendingEmailController::class)->middleware('auth');
 
 
-Route::get('check', [SendingEmailController::class, 'sendingEmails']);
+Route::get('check', function (){
+    return view('mail.template');
+});
 
 
 require __DIR__.'/auth.php';

@@ -4,107 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        .business-card {
-            display: flex;
-            width: 600px;
-            height: 200px;
-            background-color: white;
-            border-radius: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            border: 10px solid #f16425;
-        }
-
-        .left-side {
-            flex: 1;
-            background-color: #f16425;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .photo-container img {
-            width: 100%;
-            border-radius: 20px;
-        }
-
-        .right-side {
-            flex: 2;
-            padding: 0px 0px 0px 23px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .flex {
-            display: flex;
-            gap: 4;
-        }
-        .socialLinki{
-            margin: 0 2px;
-        }
-        .link{
-            text-decoration: none;
-            color: black;
-        }
-        .link:hover{
-            text-decoration: underline;
+        a:hover {
+            text-decoration: underline !important;
         }
     </style>
 </head>
-
 <body>
 
     <span> {!! $sending_email_data->mail_body !!}</span>
 
-    <div class="business-card">
-        <div class="left-side">
-            <div class="photo-container">
-                <img src="{{ $senderDefultData['sender_company_logo'] ?? 'https://archive.org/download/placeholder-image/placeholder-image.jpg' }}"
-                    alt="company logo">
-            </div>
-        </div>
-        <div class="right-side">
-            <div class="details">
-                <div class="flex " style="margin-top: 15px;">
-                    <h3 style="margin: 0; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
-                          {{ $senderDefultData['mail_sender_name'] }} </h3>
-                    @if ($senderDefultData['sender_department'])
-                        <span style="margin-left: 5px; font-weight: bolder;">||</span>
-                        <span style="margin-left: 4px; font-size: 15px; margin-top: 0px; font-family: cursive;">{{ $senderDefultData['sender_department'] }}</span>
-                    @endif
-                </div>
-                @if ($senderDefultData['sender_number'])
-                    <div style=" display: flex; margin-top: 15px;">
-                        <img src="https://img.icons8.com/?size=64&id=44034&format=png"
-                            style="width: 20px; height: 20px; margin: 0;" alt="number">
-                        <a href="tel:{{ $senderDefultData['sender_number'] }}" class="link" style=" margin-left: 5px;">+{{ $senderDefultData['sender_number'] }}</a>
-                    </div>
-                @endif
-                    <div style=" display: flex; margin-top: 5px;">
-                        <img src="https://img.icons8.com/?size=80&id=68248&format=png"
-                            style="width: 20px; height: 20px; margin: 0;" alt="email">
-                        <a href="mailto:{{ $senderDefultData['mail_from'] }}" class="link" style=" margin-left: 5px;">{{ $senderDefultData['mail_from'] }}</a>
-                    </div>
-                @if ($senderDefultData['sender_website'])
-                    <div style="display: flex; margin-top: 5px;">
-                        <img src="https://img.icons8.com/?size=80&id=8bVNpI807DcA&format=png"
-                            style="width: 20px; height: 20px; margin: 0;" alt="website">
-                        <a href="{{ $senderDefultData['sender_website'] }}" class="link" style="margin-left: 5px; "> {{ $senderDefultData['sender_website'] }}</a>
-                    </div>
-                @endif
-            </div>
-            @if ($other_links)
-                <div class="flex" style="margin-top: 15px;">
-                    @foreach ($other_links as $links)
-                        <a href="{{ $links['yourLink'] }}" class="socialLinki">
-                            <img src="{{ $links['iconLink'] }}" alt="{{ $links['yourLink'] }}" width="20px">
-                        </a>
-                    @endforeach
-                </div>
-            @endif
-        </div>
-    </div>
-</body>
 
-</html>
+
+        <table width="600" cellpadding="0" cellspacing="0" border="0" style="border: 10px solid #f16425; border-radius: 20px; width: 600px; background-color: white;">
+            <tr>
+                <td width="200" style="background-color: #f16425; text-align: center; padding: 20px;">
+                    <img src="{{ $senderDefultData['sender_company_logo'] ?? 'https://archive.org/download/placeholder-image/placeholder-image.jpg' }}" width="150" style="border-radius: 20px;" alt="company logo">
+                </td>
+                <td width="400" style="padding: 20px;">
+                    <table cellpadding="0" cellspacing="0" border="0">
+                        <tr>
+                            <td style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; font-size: 18px; font-weight: bold; color: black;">
+                                {{ $senderDefultData['mail_sender_name'] }}
+                            </td> ||
+                            @if ($senderDefultData['sender_department'])
+                            <td style="padding-left: 10px; font-family: cursive; font-size: 15px;">
+                                {{ $senderDefultData['sender_department'] }}
+                            </td>
+                            @endif
+                        </tr>
+                        <tr>
+                            @if ($senderDefultData['sender_number'])
+                                <td colspan="2" style="padding-top: 15px;">
+                                    <img src="https://img.icons8.com/?size=64&id=44034&format=png" width="20" style="vertical-align: middle;" alt="number">
+                                    <a href="tel:{{ $senderDefultData['sender_number'] }}" style="text-decoration: none; color: black; margin-left: 5px;">+{{ $senderDefultData['sender_number'] }}</a>
+                                </td>
+                            @endif
+                        </tr>
+                        <tr>
+                            @if ($senderDefultData['mail_from'])
+                            <td colspan="2" style="padding-top: 5px;">
+                                <img src="https://img.icons8.com/?size=80&id=68248&format=png" width="20" style="vertical-align: middle;" alt="email">
+                                <a href="mailto:{{ $senderDefultData['mail_from'] }}" style="text-decoration: none; color: black; margin-left: 5px;">{{ $senderDefultData['mail_from'] }}</a>
+                            </td>
+                            @endif
+                        </tr>
+                        <tr>
+                            @if ($senderDefultData['sender_website'])
+                            <td colspan="2" style="padding-top: 5px;">
+                                <img src="https://img.icons8.com/?size=80&id=8bVNpI807DcA&format=png" width="20" style="vertical-align: middle;" alt="website">
+                                <a href="{{ $senderDefultData['sender_website'] }}" style="text-decoration: none; color: black; margin-left: 5px;">{{ $senderDefultData['sender_website'] }}</a>
+                            </td>
+                            @endif
+                        </tr>
+                        <tr>
+                            @if ($other_links)
+                            <td colspan="2" style="padding-top: 15px;">
+                                @foreach ($other_links as $links)
+                                    <a href="{{ $links['yourLink'] }}" style="margin-right: 5px;">
+                                        <img src="{{ $links['iconLink'] }}" width="20" alt="{{ $links['yourLink'] }}">
+                                    </a>
+                                @endforeach
+                            </td>
+                            @endif
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </body>
+    </html>
