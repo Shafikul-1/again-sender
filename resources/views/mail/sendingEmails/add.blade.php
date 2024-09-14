@@ -96,13 +96,14 @@
             ]
         ]"
         class="space-y-6 font-[sans-serif] text-[#333] max-w-md mx-auto submitForm" enctype="multipart/form-data">
-        <select name="mail_form" id="mail_form">
-            <option disabled selected value="">No Select Sending Email</option>
-            @foreach ($userSetupEmails as $emails)
-                <option value="{{ $emails }}">{{ $emails }}</option>
-            @endforeach
-        </select>
-        <br>
+        <div class="relative flex items-center">
+            <select name="mail_form" id="mail_form" class="px-4 py-3 bg-[#f0f1f2] focus:bg-transparent w-full text-sm border outline-[#007bff] rounded transition-all dark:focus:text-white">
+                <option disabled selected value="">No Select Sending Email</option>
+                @foreach ($userSetupEmails as $emails)
+                    <option value="{{ $emails }}" class="text-black">{{ $emails }}</option>
+                @endforeach
+            </select>
+        </div>
         @error('mail_form')
             <p class="text-red-500">{{ $message }}</p>
         @enderror

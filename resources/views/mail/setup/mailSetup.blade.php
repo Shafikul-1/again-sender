@@ -175,6 +175,20 @@
             ],
             [
                 'type' => 'text',
+                'name' => 'sender_department',
+                'id' => 'sender_department',
+                'placeholder' => 'Enter your sender_department',
+                'errorClass' => $errorClass,
+                'wrapper' => [
+                    'class' => $wrapper,
+                ],
+                'attributes' => [
+                    'class' => $inputAttributeClass,
+                ],
+                'additionalContent' => '<i class=\'fa-regular fa-envelope w-[18px] h-[18px] absolute right-4\'></i>',
+            ],
+            [
+                'type' => 'text',
                 'name' => 'sender_company_logo',
                 'id' => 'sender_company_logo',
                 'placeholder' => 'Enter your sender_company_logo',

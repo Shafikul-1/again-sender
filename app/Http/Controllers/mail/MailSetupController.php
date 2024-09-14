@@ -80,6 +80,7 @@ class MailSetupController extends Controller
             'mail_encryption' => $request->mail_encryption,
             'mail_from' => $request->mail_from,
             'mail_sender_name' => $request->mail_sender_name,
+            'sender_department' => $request->sender_department,
             'other_links' => $otherLink,
             'sender_company_logo' => $request->sender_company_logo,
             'sender_website' => $request->sender_website,
@@ -124,12 +125,12 @@ class MailSetupController extends Controller
             'mail_sender_name' => 'required|string',
         ]);
 
-        $otherLinks = $request->other_links;
-        $otherLink = json_decode($otherLinks, true);
+        // $otherLinks = $request->other_links;
+        // $otherLink = json_decode($otherLinks, true);
 
         if ($request->sender_number) {
             $request->validate([
-                'sender_number' => 'required|digits:11',
+                'sender_number' => 'required|numeric',
             ]);
         }
 
@@ -143,7 +144,8 @@ class MailSetupController extends Controller
             'mail_encryption' => $request->mail_encryption,
             'mail_from' => $request->mail_from,
             'mail_sender_name' => $request->mail_sender_name,
-            'other_links' => $otherLink,
+            'sender_department' => $request->sender_department,
+            // 'other_links' => $otherLink,
             'sender_company_logo' => $request->sender_company_logo,
             'sender_website' => $request->sender_website,
             'sender_number' => $request->sender_number,

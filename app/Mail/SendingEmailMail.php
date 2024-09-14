@@ -3,32 +3,27 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Mail\Mailables\Content;
-use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
 class SendingEmailMail extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $sending_email_data;
-    public $mail_sender_name;
-    public $mail_from;
-    public $sender_number;
-    public $sender_website;
+    public $senderDefultData;
     public $other_links;
     /**
      * Create a new message instance.
      */
-    public function __construct($sending_email_data, $mail_sender_name, $mail_from, $sender_number, $sender_website, $other_links)
+    public function __construct($mailContent, $senderDefultData, $other_links)
     {
-        $this->sending_email_data = $sending_email_data;
-        $this->mail_sender_name = $mail_sender_name;
-        $this->mail_from = $mail_from;
-        $this->sender_number = $sender_number;
-        $this->sender_website = $sender_website;
+        $this->sending_email_data = $mailContent;
+        $this->senderDefultData = $senderDefultData;
         $this->other_links = $other_links;
     }
 

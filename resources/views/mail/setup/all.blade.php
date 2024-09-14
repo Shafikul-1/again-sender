@@ -34,8 +34,11 @@
                     <th class="p-4 text-sm font-semibold bg-red-400 text-black text-center">
                         Net Disable
                     </th>
-                    <th class="p-4 text-sm font-semibold bg-purple-700 text-white text-center">
+                    <th class="p-4 text-sm font-semibold bg-amber-400 text-black text-center">
                         Total
+                    </th>
+                    <th class="p-4 text-sm font-semibold bg-purple-700 text-white text-center">
+                        Average
                     </th>
                     <th class="p-4 text-sm font-semibold bg-cyan-600 text-white text-center ">
                         Action
@@ -85,22 +88,34 @@
                                 <div class="mx-auto px-3 py-1 bg-red-400 w-max text-black rounded">{{ $mails->netdisable_count }}</div>
                             </a>
                         </td>
-                        {{-- Parsent --}}
+
+                        @php
+                            $total = [
+                                $mails->fail_count,
+                                $mails->success_count,
+                                $mails->pending_count,
+                                $mails->noaction_count,
+                                $mails->netdisable_count
+                            ];
+
+                            $totalSum = array_sum($total);
+                            $average = ($totalSum > 0) ? ($totalSum / count($total)) : 0;
+                            $averagePercentage = ($totalSum > 0) ? (($average / $totalSum) * 100) : 0;
+
+
+                                // Calculate the percentage for each category if the total sum is greater than 0
+                                // $failPercentage = ($totalSum > 0) ? (($total['fail'] / $totalSum) * 100) : 0;
+                                // $successPercentage = ($totalSum > 0) ? (($total['success'] / $totalSum) * 100) : 0;
+                                // $pendingPercentage = ($totalSum > 0) ? (($total['pending'] / $totalSum) * 100) : 0;
+                                // $noactionPercentage = ($totalSum > 0) ? (($total['noaction'] / $totalSum) * 100) : 0;
+                                // $netdisablePercentage = ($totalSum > 0) ? (($total['netdisable'] / $totalSum) * 100) : 0;
+
+                        @endphp
+                        <td class="text-center p-4 text-xs">
+                            <p class="text-xs text-gray-400 ml-2">{{ $totalSum }}</p>
+                        </td>
                         <td class="text-center p-4 flex items-center">
                             <div class="bg-gray-600 rounded-full w-full h-2 min-w-[50px]">
-                                @php
-                                    $total = [
-                                        $mails->fail_count,
-                                        $mails->success_count,
-                                        $mails->pending_count,
-                                        $mails->noaction_count,
-                                        $mails->netdisable_count
-                                    ];
-
-                                    $totalSum = array_sum($total);
-                                    $average = ($totalSum > 0) ? ($totalSum / count($total)) : 0;
-                                    $averagePercentage = ($totalSum > 0) ? (($average / $totalSum) * 100) : 0;
-                                @endphp
                                 <div class="w-4/5 h-full rounded-full bg-purple-700" style="width: {{ $averagePercentage }}%;"></div>
                             </div>
                             <p class="text-xs text-gray-400 ml-2">{{ number_format($averagePercentage, 2) }}%</p>

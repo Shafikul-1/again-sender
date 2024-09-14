@@ -19,6 +19,7 @@ class MailSetup extends Model
         'mail_encryption',
         'mail_from',
         'mail_sender_name',
+        'sender_department',
         'other_links',
         'sender_company_logo',
         'sender_website',

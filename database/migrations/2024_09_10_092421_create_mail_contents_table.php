@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('mail_contents', function (Blueprint $table) {
             $table->id();
             $table->text('mail_subject');
-            $table->text('mail_body')->nullable();
+            $table->longText('mail_body')->nullable();
             $table->json('mail_files')->nullable();
             $table->foreignId('user_id')->references('id')->on('users')->cascadeOnDelete();
             $table->timestamps();

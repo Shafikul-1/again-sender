@@ -53,7 +53,15 @@ class SendingEmailJob implements ShouldQueue
 
             $status = false;
             try {
-                Mail::to($emails->mails)->send(new SendingEmailMail($emails->mail_content[0], $mailConfigData->mail_sender_name, $mailConfigData->mail_from, $mailConfigData->sender_number, $mailConfigData->sender_website, $mailConfigData->other_links));
+                $senderDefultData = [
+                    'mail_sender_name' => $mailConfigData->mail_sender_name,
+                    'mail_from' => $mailConfigData->mail_from,
+                    'sender_number' => $mailConfigData->sender_number,
+                    'sender_website' => $mailConfigData->sender_website,
+                    'sender_department' => $mailConfigData->sender_department,
+                    'sender_company_logo' => $mailConfigData->sender_company_logo,
+                ];
+                Mail::to($emails->mails)->send(new SendingEmailMail($emails->mail_content[0], $senderDefultData, $mailConfigData->other_links));
                 $status = true;
             } catch (Throwable $e) {
                 $status = false;

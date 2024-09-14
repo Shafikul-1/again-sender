@@ -60,35 +60,37 @@
     <div class="business-card">
         <div class="left-side">
             <div class="photo-container">
-                <img src="https://lh3.googleusercontent.com/a/ACg8ocIhHmH8cqQbGoJeurXszjZcVFG5G3i4JF65PwWZ93piNN63Qy4=s288-c-no"
-                    alt="">
+                <img src="{{ $senderDefultData['sender_company_logo'] ?? 'https://archive.org/download/placeholder-image/placeholder-image.jpg' }}"
+                    alt="company logo">
             </div>
         </div>
         <div class="right-side">
             <div class="details">
                 <div class="flex " style="margin-top: 15px;">
                     <h3 style="margin: 0; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
-                          {{ $mail_sender_name }} </h3>
-                    <span style="margin-left: 5px; font-weight: bolder;">||</span>
-                    <span style="margin-left: 4px; font-size: 15px; margin-top: 0px; font-family: cursive;">Senior Product Manager</span>
+                          {{ $senderDefultData['mail_sender_name'] }} </h3>
+                    @if ($senderDefultData['sender_department'])
+                        <span style="margin-left: 5px; font-weight: bolder;">||</span>
+                        <span style="margin-left: 4px; font-size: 15px; margin-top: 0px; font-family: cursive;">{{ $senderDefultData['sender_department'] }}</span>
+                    @endif
                 </div>
-                @if ($sender_number)
+                @if ($senderDefultData['sender_number'])
                     <div style=" display: flex; margin-top: 15px;">
                         <img src="https://img.icons8.com/?size=64&id=44034&format=png"
-                            style="width: 20px; height: 20px; margin: 0;" alt="">
-                        <a href="tel:{{ $sender_number }}" class="link" style=" margin-left: 5px;">+{{ $sender_number }}</a>
+                            style="width: 20px; height: 20px; margin: 0;" alt="number">
+                        <a href="tel:{{ $senderDefultData['sender_number'] }}" class="link" style=" margin-left: 5px;">+{{ $senderDefultData['sender_number'] }}</a>
                     </div>
                 @endif
                     <div style=" display: flex; margin-top: 5px;">
                         <img src="https://img.icons8.com/?size=80&id=68248&format=png"
-                            style="width: 20px; height: 20px; margin: 0;" alt="">
-                        <a href="mailto:{{ $mail_from }}" class="link" style=" margin-left: 5px;">{{ $mail_from }}</a>
+                            style="width: 20px; height: 20px; margin: 0;" alt="email">
+                        <a href="mailto:{{ $senderDefultData['mail_from'] }}" class="link" style=" margin-left: 5px;">{{ $senderDefultData['mail_from'] }}</a>
                     </div>
-                @if ($sender_website)
+                @if ($senderDefultData['sender_website'])
                     <div style="display: flex; margin-top: 5px;">
                         <img src="https://img.icons8.com/?size=80&id=8bVNpI807DcA&format=png"
-                            style="width: 20px; height: 20px; margin: 0;" alt="">
-                        <a href="{{ $sender_website }}" class="link" style="margin-left: 5px; "> {{ $sender_website }}</a>
+                            style="width: 20px; height: 20px; margin: 0;" alt="website">
+                        <a href="{{ $senderDefultData['sender_website'] }}" class="link" style="margin-left: 5px; "> {{ $senderDefultData['sender_website'] }}</a>
                     </div>
                 @endif
             </div>
@@ -96,7 +98,7 @@
                 <div class="flex" style="margin-top: 15px;">
                     @foreach ($other_links as $links)
                         <a href="{{ $links['yourLink'] }}" class="socialLinki">
-                            <img src="{{ $links['iconLink'] }}" alt="" width="20px">
+                            <img src="{{ $links['iconLink'] }}" alt="{{ $links['yourLink'] }}" width="20px">
                         </a>
                     @endforeach
                 </div>
