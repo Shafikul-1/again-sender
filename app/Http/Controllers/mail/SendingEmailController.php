@@ -18,9 +18,20 @@ class SendingEmailController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $sendingEmails = SendingEmail::with('mail_content')->where('user_id', Auth::user()->id)->orderByDesc('id')->paginate(25);
+        $query = SendingEmail::query();
+
+        if ($email = $request->query('email')) {
+            $query->where('mail_form',  $email);
+        }
+        if ($status = $request->query('status')) {
+            $query->where('status', $status);
+        }
+        $query->where('user_id', Auth::user()->id);
+
+        $sendingEmails = $query->with('mail_content')->orderByDesc('id')->paginate(5)->appends(['email' => $email, 'status' => $status]);
+        // return $sendingEmails;
         return view('mail.sendingEmails.all', compact('sendingEmails'));
     }
 

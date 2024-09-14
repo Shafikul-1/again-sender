@@ -61,27 +61,27 @@
                             {{ $mails->mail_from }}
                         </td>
                         <td class="text-gray-300 text-center p-4 text-sm">
-                            <a href="{{ $mails->mail_from }}/fail">
+                            <a href="{{ route('sendingemails.index') . '?email=' . $mails->mail_from . '&status=fail' }}">
                                 <div class="mx-auto px-3 py-1 bg-red-700 w-max text-white rounded">{{ $mails->fail_count }}</div>
                             </a>
                         </td>
                         <td class="text-center p-4 text-xs">
-                            <a href="{{ $mails->mail_from }}">
+                            <a href="{{ route('sendingemails.index') . '?email=' . $mails->mail_from . '&status=success' }}">
                                 <div class="mx-auto px-3 py-1 bg-green-700 w-max text-white rounded">{{ $mails->success_count }}</div>
                             </a>
                         </td>
                         <td class="text-center p-4 text-xs">
-                            <a href="{{ $mails->mail_from }}">
+                            <a href="{{ route('sendingemails.index') . '?email=' . $mails->mail_from . '&status=pending' }}">
                                 <div class="mx-auto px-3 py-1 bg-yellow-700 w-max text-white rounded">{{ $mails->pending_count }}</div>
                             </a>
                         </td>
                         <td class="text-center p-4 text-xs">
-                            <a href="{{ $mails->mail_from }}">
+                            <a href="{{ route('sendingemails.index') . '?email=' . $mails->mail_from . '&status=noaction' }}">
                                 <div class="mx-auto px-3 py-1 bg-blue-100 w-max text-black rounded">{{ $mails->noaction_count }}</div>
                             </a>
                         </td>
                         <td class="text-center p-4 text-xs">
-                           <a href="{{ $mails->mail_from }}">
+                            <a href="{{ route('sendingemails.index') . '?email=' . $mails->mail_from . '&status=netdisable' }}">
                                 <div class="mx-auto px-3 py-1 bg-red-400 w-max text-black rounded">{{ $mails->netdisable_count }}</div>
                             </a>
                         </td>
