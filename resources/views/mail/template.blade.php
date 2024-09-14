@@ -89,7 +89,7 @@
                     </h2>
                     <ul class="contact" style="list-style: none; padding: 0; margin: 10px 0;">
                         <li style="display: flex; align-items: center; margin-bottom: 5px;">
-                            <a href="mail:{{ $mail_from }}">
+                            <a href="mailto:{{ $mail_from }}">
                                 <img src="https://img.icons8.com/?size=256&id=7rhqrO588QcU&format=png" alt="email"
                                     style="width: 20px; margin-right: 10px;"> {{ $mail_from }}
                             </a>

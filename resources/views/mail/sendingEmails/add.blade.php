@@ -47,19 +47,19 @@
                 'class' => $inputAttributeClass,
             ],
         ],
-        [
-            'type' => 'text',
-            'name' => 'mail_body',
-            'id' => 'mail_body',
-            'placeholder' => 'Enter your mail_body',
-            'errorClass' => $errorClass,
-            'wrapper' => [
-                'class' => $wrapper,
-            ],
-            'attributes' => [
-                'class' => $inputAttributeClass,
-            ],
-        ],
+        // [
+        //     'type' => 'text',
+        //     'name' => 'mail_body',
+        //     'id' => 'mail_body',
+        //     'placeholder' => 'Enter your mail_body',
+        //     'errorClass' => $errorClass,
+        //     'wrapper' => [
+        //         'class' => $wrapper,
+        //     ],
+        //     'attributes' => [
+        //         'class' => $inputAttributeClass,
+        //     ],
+        // ],
         [
             'type' => 'text',
             'name' => 'schedule_time',
@@ -106,8 +106,20 @@
         @error('mail_form')
             <p class="text-red-500">{{ $message }}</p>
         @enderror
+
+        @error('mail_body')
+            <p class="text-red-500">{{ $message }}</p>
+        @enderror
+        @error('mail_files')
+            <p class="text-red-500">{{ $message }}</p>
+        @enderror
+        <x-texteditor name="mail_body" rows="20" cols="40"
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"></x-texteditor>
     </x-form>
 </x-app-layout>
+
+
+
 <script>
     document.getElementById('schedule_time').addEventListener('focus', function() {
         if (!document.getElementById('timeInfo')) {

@@ -38,6 +38,7 @@ class SendingEmailController extends Controller
      */
     public function store(Request $request)
     {
+        // return $request;
         $userId = Auth::user()->id;
 
         // Validate inputs
@@ -45,7 +46,7 @@ class SendingEmailController extends Controller
             'mails' => 'required|string',
             'send_time' => 'required|string',
             'mail_subject' => 'required|string',
-            'mail_body' => 'required|string',
+            'mail_body' => 'required',
             'mail_form' => 'required|string|not_in:""',
             'mail_files' => 'nullable|array',
             'mail_files.*' => 'file|mimes:jpg,jpeg,png,pdf,doc,docx|max:10100',
