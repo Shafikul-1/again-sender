@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\mail;
 
 use Illuminate\Http\Request;
 use App\Models\MailDelivaryDetail;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
-class MailDelivaryDetailController extends Controller
+class MailDeliveryDetailsController extends Controller
 {
     /**
      * Display a listing of the resource.
