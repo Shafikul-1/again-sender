@@ -89,33 +89,35 @@
             ],
         ],
     ]"
-        :submit="[
-            'text' => 'Submit',
-            'attributes' => [
-                'class' => 'bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700'
-            ]
-        ]"
-        class="space-y-6 font-[sans-serif] text-[#333] max-w-md mx-auto submitForm" enctype="multipart/form-data">
-        <div class="relative flex items-center">
-            <select name="mail_form" id="mail_form" class="px-4 py-3 bg-[#f0f1f2] focus:bg-transparent w-full text-sm border outline-[#007bff] rounded transition-all dark:focus:text-white">
-                <option disabled selected value="">No Select Sending Email</option>
+        class="space-y-6 font-[sans-serif] text-[#333] max-w-full mx-auto submitForm grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-6" enctype="multipart/form-data">
+        <div class="relative flex items-center flex-col">
+            <select name="mail_form" id="mail_form"
+                class="px-4 py-3 bg-[#f0f1f2] focus:bg-transparent w-full text-sm border outline-[#007bff] rounded transition-all dark:focus:text-white">
+                <option disabled selected value="">No Select Sending mail_form</option>
                 @foreach ($userSetupEmails as $emails)
                     <option value="{{ $emails }}" class="text-black">{{ $emails }}</option>
                 @endforeach
             </select>
+            @error('mail_form')
+                <p class="text-red-500 text-start">{{ $message }}</p>
+            @enderror
         </div>
-        @error('mail_form')
-            <p class="text-red-500">{{ $message }}</p>
-        @enderror
 
+        <div class="space-y-4">
         @error('mail_body')
             <p class="text-red-500">{{ $message }}</p>
         @enderror
         @error('mail_files')
             <p class="text-red-500">{{ $message }}</p>
         @enderror
-        <x-texteditor name="mail_body" rows="20" cols="40"
-            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"></x-texteditor>
+
+            <div>
+                <x-texteditor name="mail_body" rows="25" cols="40" class="w-full border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+            <div class="flex justify-end">
+                <button type="submit" class="px-9 py-4 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"> Submit </button>
+            </div>
+        </div>
     </x-form>
 </x-app-layout>
 

@@ -25,7 +25,7 @@
                         <tr>
                             <td style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; font-size: 18px; font-weight: bold; color: black;">
                                 {{ $senderDefultData['mail_sender_name'] }}
-                            </td> ||
+                            </td>||
                             @if ($senderDefultData['sender_department'])
                             <td style="padding-left: 10px; font-family: cursive; font-size: 15px;">
                                 {{ $senderDefultData['sender_department'] }}

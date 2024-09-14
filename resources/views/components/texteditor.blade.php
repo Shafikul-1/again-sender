@@ -7,6 +7,15 @@
     .tox-statusbar__branding {
         display: none;
     }
+
+    /* Make TinyMCE full width */
+    .tox {
+        width: calc(100vw - 50px) !important; /* Adjust based on form padding */
+    }
+
+    #texteditor {
+        width: calc(100vw - 50px) !important; /* Adjust based on form padding */
+    }
 </style>
 <textarea name="{{ $name }}" id="texteditor" cols="{{ $cols }}" rows="{{ $rows }}"
     {{ $attributes }}></textarea>

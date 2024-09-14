@@ -28,9 +28,12 @@ class SendingEmailController extends Controller
         if ($status = $request->query('status')) {
             $query->where('status', $status);
         }
+        if($search = request()->input('search')){
+            $query->where('mails', 'LIKE' , '%' . $search . '%');
+        }
         $query->where('user_id', Auth::user()->id);
 
-        $sendingEmails = $query->with('mail_content')->orderByDesc('id')->paginate(25)->appends(['email' => $email, 'status' => $status]);
+        $sendingEmails = $query->with('mail_content')->orderByDesc('id')->paginate(25)->appends(['email' => $email, 'status' => $status, 'search' => $search]);
         // return $sendingEmails;
         return view('mail.sendingEmails.all', compact('sendingEmails'));
     }
