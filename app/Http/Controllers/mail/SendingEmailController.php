@@ -29,7 +29,7 @@ class SendingEmailController extends Controller
      */
     public function create()
     {
-        $userSetupEmails = MailSetup::pluck('mail_username');
+        $userSetupEmails = MailSetup::pluck('mail_from');
         return view('mail.sendingEmails.add', compact('userSetupEmails'));
     }
 
@@ -79,11 +79,15 @@ class SendingEmailController extends Controller
         });
 
         // Prepare data for batch insertion
+        $mailsetupDetails = MailSetup::where('mail_from', $request->mail_form)->where('user_id', Auth::user()->id)->first();
+        $mailsetup_id = $mailsetupDetails->id;
+
         $send_time = $request->send_time;
         $mail_form = $request->mail_form;
         $schedule_time = explode('|', $request->schedule_time);
         // $randomMinute = $schedule_time[array_rand($schedule_time)];
-        $sendingMail = array_map(function ($data) use ($mailContent, $send_time, $userId, $schedule_time, $mail_form) {
+
+        $sendingMail = array_map(function ($data) use ($mailContent, $send_time, $userId, $schedule_time, $mail_form, $mailsetup_id) {
             $randomMinute = $schedule_time[array_rand($schedule_time)];
             $newTime = Carbon::parse($send_time)->addMinutes((int)$randomMinute);
             return [
@@ -91,6 +95,7 @@ class SendingEmailController extends Controller
                 'send_time' => $newTime,
                 'wait_minute' => (int)$randomMinute,
                 'mail_form' => $mail_form,
+                'mailsetup_id' => $mailsetup_id,
                 'mail_content_id' => $mailContent->id,
                 'created_at' => now(),
                 'updated_at' => now(),

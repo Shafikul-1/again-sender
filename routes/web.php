@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\mail\MailSetupController;
 use App\Http\Controllers\mail\SendingEmailController;
-use App\Http\Controllers\MailDelivaryDetailController;
+use App\Http\Controllers\mail\MailDelivaryDetailController;
 
 Route::get('/', function () {
     return view('welcome');

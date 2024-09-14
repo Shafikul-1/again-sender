@@ -34,7 +34,7 @@ class SendingEmailJob implements ShouldQueue
     public function handle(): void
     {
         foreach ($this->sendingEmails as $emails) {
-            $mailConfigData = MailSetup::where('mail_username', $emails->mail_form)->first();
+            $mailConfigData = MailSetup::find($emails->mailsetup_id);
             config([
                 'mail.default' => $mailConfigData->mail_transport,
                 'mail.mailers.' . $mailConfigData->mail_transport => [
@@ -61,11 +61,12 @@ class SendingEmailJob implements ShouldQueue
             }
 
             // Delete Sending Emails
-            MailDelivaryDetail::create([
+           $del =  MailDelivaryDetail::create([
                 'sender' => $mailConfigData->mail_username,
                 'receiver' => $emails->mails,
                 'status' => $status ? 'success' : 'fail',
                 'user_id' => $emails->user_id,
+                'mailsetup_id' =>1
             ]);
             SendingEmail::find($emails->id)->delete();
         }

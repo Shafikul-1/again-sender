@@ -13,6 +13,7 @@ class MailDelivaryDetail extends Model
         'sender',
         'receiver',
         'status',
+        'mailsetup_id',
         'user_id',
     ];
 }

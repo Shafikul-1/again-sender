@@ -28,4 +28,8 @@ class MailSetup extends Model
     protected $casts = [
         'other_links' => 'array'
     ];
+
+    public function mail_delivery_detals(){
+        // $this
+    }
 }
