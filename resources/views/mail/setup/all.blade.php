@@ -88,10 +88,24 @@
                         {{-- Parsent --}}
                         <td class="text-center p-4 flex items-center">
                             <div class="bg-gray-600 rounded-full w-full h-2 min-w-[50px]">
-                                <div class="w-4/5 h-full rounded-full bg-purple-700"></div>
+                                @php
+                                    $total = [
+                                        $mails->fail_count,
+                                        $mails->success_count,
+                                        $mails->pending_count,
+                                        $mails->noaction_count,
+                                        $mails->netdisable_count
+                                    ];
+
+                                    $totalSum = array_sum($total);
+                                    $average = ($totalSum > 0) ? ($totalSum / count($total)) : 0;
+                                    $averagePercentage = ($totalSum > 0) ? (($average / $totalSum) * 100) : 0;
+                                @endphp
+                                <div class="w-4/5 h-full rounded-full bg-purple-700" style="width: {{ $averagePercentage }}%;"></div>
                             </div>
-                            <p class="text-xs text-gray-400 ml-2">80%</p>
+                            <p class="text-xs text-gray-400 ml-2">{{ number_format($averagePercentage, 2) }}%</p>
                         </td>
+
                         {{-- Action --}}
                         <td class="">
                             <div class="flex gap-4 justify-center">

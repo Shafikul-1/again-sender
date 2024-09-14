@@ -30,7 +30,7 @@ class SendingEmailController extends Controller
         }
         $query->where('user_id', Auth::user()->id);
 
-        $sendingEmails = $query->with('mail_content')->orderByDesc('id')->paginate(5)->appends(['email' => $email, 'status' => $status]);
+        $sendingEmails = $query->with('mail_content')->orderByDesc('id')->paginate(25)->appends(['email' => $email, 'status' => $status]);
         // return $sendingEmails;
         return view('mail.sendingEmails.all', compact('sendingEmails'));
     }
