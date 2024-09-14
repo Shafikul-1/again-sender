@@ -1,5 +1,6 @@
 <x-app-layout>
     <a href="{{ route('mailsetup.create') }}" class="px-5 py-2.5 rounded-lg text-sm tracking-wider font-medium border border-current outline-none bg-blue-700 hover:bg-transparent text-white hover:text-blue-700 transition-all duration-300">Add Mail</a>
+
     <div class="overflow-x-auto font-[sans-serif] bg-gray-900 text-gray-200">
         <table class="min-w-full bg-gray-800 border border-gray-700">
             <thead class="whitespace-nowrap">
@@ -27,6 +28,12 @@
                     <th class="p-4 text-sm font-semibold bg-yellow-700 text-white text-center">
                         Pending
                     </th>
+                    <th class="p-4 text-sm font-semibold bg-blue-100 text-black text-center">
+                        No Action
+                    </th>
+                    <th class="p-4 text-sm font-semibold bg-red-400 text-black text-center">
+                        Net Disable
+                    </th>
                     <th class="p-4 text-sm font-semibold bg-purple-700 text-white text-center">
                         Total
                     </th>
@@ -51,23 +58,41 @@
                             </label>
                         </td>
                         <td class="text-gray-300 text-center p-4 text-sm">
-                            {{ $mails->mail_username }}
+                            {{ $mails->mail_from }}
                         </td>
                         <td class="text-gray-300 text-center p-4 text-sm">
-                            <div class="mx-auto px-3 py-1 bg-red-700 w-max text-white rounded">2</div>
+                            <a href="{{ $mails->mail_from }}/fail">
+                                <div class="mx-auto px-3 py-1 bg-red-700 w-max text-white rounded">{{ $mails->fail_count }}</div>
+                            </a>
                         </td>
                         <td class="text-center p-4 text-xs">
-                            <div class="mx-auto px-3 py-1 bg-green-700 w-max text-white rounded">6</div>
+                            <a href="{{ $mails->mail_from }}">
+                                <div class="mx-auto px-3 py-1 bg-green-700 w-max text-white rounded">{{ $mails->success_count }}</div>
+                            </a>
                         </td>
                         <td class="text-center p-4 text-xs">
-                            <div class="mx-auto px-3 py-1 bg-yellow-700 w-max text-white rounded">9</div>
+                            <a href="{{ $mails->mail_from }}">
+                                <div class="mx-auto px-3 py-1 bg-yellow-700 w-max text-white rounded">{{ $mails->pending_count }}</div>
+                            </a>
                         </td>
+                        <td class="text-center p-4 text-xs">
+                            <a href="{{ $mails->mail_from }}">
+                                <div class="mx-auto px-3 py-1 bg-blue-100 w-max text-black rounded">{{ $mails->noaction_count }}</div>
+                            </a>
+                        </td>
+                        <td class="text-center p-4 text-xs">
+                           <a href="{{ $mails->mail_from }}">
+                                <div class="mx-auto px-3 py-1 bg-red-400 w-max text-black rounded">{{ $mails->netdisable_count }}</div>
+                            </a>
+                        </td>
+                        {{-- Parsent --}}
                         <td class="text-center p-4 flex items-center">
                             <div class="bg-gray-600 rounded-full w-full h-2 min-w-[50px]">
                                 <div class="w-4/5 h-full rounded-full bg-purple-700"></div>
                             </div>
                             <p class="text-xs text-gray-400 ml-2">80%</p>
                         </td>
+                        {{-- Action --}}
                         <td class="">
                             <div class="flex gap-4 justify-center">
                                 <a href="{{ route('mailsetup.edit', $mails->id) }}" class="mr-4" title="Edit">

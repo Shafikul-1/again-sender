@@ -61,14 +61,7 @@ class SendingEmailJob implements ShouldQueue
             }
 
             // Delete Sending Emails
-           $del =  MailDelivaryDetail::create([
-                'sender' => $mailConfigData->mail_username,
-                'receiver' => $emails->mails,
-                'status' => $status ? 'success' : 'fail',
-                'user_id' => $emails->user_id,
-                'mailsetup_id' =>1
-            ]);
-            SendingEmail::find($emails->id)->delete();
+            SendingEmail::where('id' , $emails->id)->update(['status' => $status ? 'success' : 'fail']);
         }
     }
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class MailSetup extends Model
 {
@@ -29,7 +30,8 @@ class MailSetup extends Model
         'other_links' => 'array'
     ];
 
-    public function mail_delivery_detals(){
-        // $this
+    public function sending_emails()
+    {
+        return  $this->hasMany(SendingEmail::class, 'mailsetup_id', 'id')->where('user_id', Auth::user()->id);
     }
 }

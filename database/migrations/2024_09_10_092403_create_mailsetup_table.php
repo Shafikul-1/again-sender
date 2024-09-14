@@ -21,6 +21,9 @@ return new class extends Migration
             $table->string('mail_encryption');
             $table->string('mail_from');
             $table->string('mail_sender_name');
+            $table->string('sender_company_logo')->nullable();
+            $table->string('sender_website')->nullable();
+            $table->integer('sender_number')->nullable();
             $table->json('other_links');
             $table->foreignId('user_id')->references('id')->on('users')->cascadeOnDelete();
             $table->timestamps();

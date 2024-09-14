@@ -24,10 +24,6 @@
                         {{ __('Sending Emails') }}
                     </x-nav-link>
 
-                    <x-nav-link :href="route('maildelivery.index')" :active="request()->routeIs('maildelivery.index')">
-                        {{ __('Sending All Mail') }}
-                    </x-nav-link>
-
                     <x-nav-link :href="route('user')" :active="request()->routeIs('user')">
                         {{ __('Profile Dashboard') }}
                     </x-nav-link>

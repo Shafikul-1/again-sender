@@ -14,9 +14,12 @@ return new class extends Migration
         Schema::create('sending_emails', function (Blueprint $table) {
             $table->id();
             $table->string('mails');
+            $table->string('mail_form');
+            $table->enum('status', ['noaction', 'pending', 'netdisable', 'fail', 'success'])->default('noaction');
             $table->timestamp('send_time');
-            $table->enum('status', ['noaction', 'pending', 'netdisable'])->default('noaction');
+            $table->integer('wait_minute')->default(0);
             $table->foreignId('mail_content_id')->references('id')->on('mail_contents')->cascadeOnDelete();
+            $table->foreignId('mailsetup_id')->references('id')->on('mailsetup')->cascadeOnDelete();
             $table->foreignId('user_id')->references('id')->on('users')->cascadeOnDelete();
             $table->timestamps();
         });

@@ -14,7 +14,26 @@ class MailSetupController extends Controller
      */
     public function index()
     {
-        $allEmail = MailSetup::where('user_id', Auth::user()->id)->paginate(10);
+        // $allEmail = MailSetup::where('user_id', Auth::user()->id)->paginate(10);
+        $allEmail = MailSetup::select(['id','mail_from'])->withCount([
+            'sending_emails as noaction_count' => function ($query) {
+                $query->where('status', 'noaction');
+            },
+            'sending_emails as pending_count' => function ($query) {
+                $query->where('status', 'pending');
+            },
+            'sending_emails as netdisable_count' => function ($query) {
+                $query->where('status', 'netdisable');
+            },
+            'sending_emails as fail_count' => function ($query) {
+                $query->where('status', 'fail');
+            },
+            'sending_emails as success_count' => function ($query) {
+                $query->where('status', 'success');
+            },
+        ])
+        ->where('user_id', Auth::user()->id)->paginate(10);
+        // return $allEmail;
         return view('mail.setup.all', compact('allEmail'));
     }
 
