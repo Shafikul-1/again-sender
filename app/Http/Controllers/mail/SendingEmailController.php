@@ -147,7 +147,7 @@ class SendingEmailController extends Controller
     public function edit(string $id)
     {
         $sendingEmailEdit = SendingEmail::with('mail_content')->findOrFail($id);
-        if($sendingEmailEdit->status != 'noaction'){
+        if ($sendingEmailEdit->status != 'noaction') {
             return redirect()->route('sendingemails.index')->with('error', 'Please check Email staus');
         }
         if (!Gate::allows('checkPermission', $sendingEmailEdit)) {
@@ -164,7 +164,7 @@ class SendingEmailController extends Controller
     public function update(Request $request, string $id)
     {
         $sendingEmailData = SendingEmail::with('mail_content')->findOrFail($id);
-        if($sendingEmailData->status != 'noaction'){
+        if ($sendingEmailData->status != 'noaction') {
             return redirect()->route('sendingemails.index')->with('error', 'Please check Email staus');
         }
         if (!Gate::allows('checkPermission', $sendingEmailData)) {
@@ -201,7 +201,7 @@ class SendingEmailController extends Controller
                 $files->move(public_path() . '/mailFile', $rename);
                 $fileData[] = $rename;
             }
-        } else{
+        } else {
             $fileData = $oldFiles;
         }
 
@@ -229,25 +229,14 @@ class SendingEmailController extends Controller
     public function destroy(string $id)
     {
         $deleteSendingEmail = SendingEmail::findOrFail($id);
-        $mailContentId = SendingEmail::where('mail_content_id', $deleteSendingEmail->mail_content_id)->get();
-        if(count($mailContentId) > 1){
-            $deleteSendingEmail->delete();
-        } else{
-            $contentDelete = MailContent::findOrFail($deleteSendingEmail->mail_content_id);
-            if(!empty($contentDelete->mail_files)){
-                foreach($contentDelete->mail_files as $file){
-                    if(!File::exists(public_path() . 'mailFile' . $file)){
-                        continue;
-                    }
-                    File::delete(public_path() . 'mailFile' . $file);
-                }
-            }
-            $contentDelete->delete();
+        if (Gate::allows('checkPermission', $deleteSendingEmail)) {
+            $mailContentId = SendingEmail::where('mail_content_id', $deleteSendingEmail->mail_content_id)->get();
+            $deleteAll = $this->deleteFile($mailContentId, $deleteSendingEmail);
+            return $deleteAll ? redirect()->back()->with('success', 'Mail Delete successful') :  redirect()->back()->with('error', 'someting went wrong');
+        } else {
+            return  redirect()->back()->with('error', 'no permession delete this content');
         }
-
-        return $deleteSendingEmail ? redirect()->back()->with('success', 'Mail Delete successful') :  redirect()->back()->with('error', 'someting went wrong');
     }
-
 
     /**
      * Current time less then equal `>=` all waiting sent emails add SendingEmailJob table
@@ -298,5 +287,53 @@ class SendingEmailController extends Controller
             }
         }
         return "Time Update Successful";
+    }
+
+    public function multiwork(Request $request)
+    {
+        $validated = $request->validate([
+            'multiId' => 'required|string',
+        ]);
+
+        if ($request->multiId != null) {
+            $allId = explode(',', $request->multiId);
+            try {
+                foreach ($allId as $id) {
+                    $deleteSendingEmail = SendingEmail::findOrFail($id);
+                    if (Gate::allows('checkPermission', $deleteSendingEmail)) {
+                        $mailContentId = SendingEmail::where('mail_content_id', $deleteSendingEmail->mail_content_id)->get();
+                        $this->deleteFile($mailContentId, $deleteSendingEmail);
+                    }
+                }
+                return redirect()->back()->with('success', 'All Delete Successful');
+            } catch (Throwable $th) {
+                return redirect()->back()->with('error', 'Someting went wrong');
+            }
+        } else {
+            return redirect()->back()->with('error', 'please select');
+        }
+    }
+
+    private function deleteFile($content, $data)
+    {
+        try {
+            if (count($content) > 1) {
+                $data->delete();
+            } else {
+                $contentDelete = MailContent::findOrFail($data->mail_content_id);
+                if (!empty($contentDelete->mail_files)) {
+                    foreach ($contentDelete->mail_files as $file) {
+                        if (!File::exists(public_path() . '/mailFile/' . $file)) {
+                            continue;
+                        }
+                        File::delete(public_path() . '/mailFile/' . $file);
+                    }
+                }
+                $contentDelete->delete();
+            }
+            return true;
+        } catch (Throwable $th) {
+            return false;
+        }
     }
 }

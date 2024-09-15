@@ -23,8 +23,8 @@
             <thead class="whitespace-nowrap">
                 <tr>
                     <th class="pl-4 bg-blue-900">
-                        <input id="checkbox" type="checkbox" class="hidden peer" />
-                        <label for="checkbox"
+                        <input onclick="allChecked()" id="allSelected" type="allSelected" class="hidden peer" />
+                        <label for="allSelected"
                             class="relative flex items-center justify-center p-0.5 peer-checked:before:hidden before:block before:absolute before:w-full before:h-full before:bg-gray-600 w-5 h-5 cursor-pointer bg-blue-800 border border-gray-600 rounded overflow-hidden transition-transform duration-300 transform hover:scale-105">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-full fill-white" viewBox="0 0 520 520">
                                 <path
@@ -67,8 +67,8 @@
                 @foreach ($allEmail as $mails)
                     <tr class="hover:bg-gray-700 transition-colors duration-300">
                         <td class="pl-4 w-8">
-                            <input id="checkbox1" type="checkbox" class="hidden peer" />
-                            <label for="checkbox1"
+                            <input name="allId[]" id="emailContentCheckBox" type="checkbox" class="hidden peer" />
+                            <label for="emailContentCheckBox"
                                 class="relative flex items-center justify-center p-0.5 peer-checked:before:hidden before:block before:absolute before:w-full before:h-full before:bg-gray-600 w-5 h-5 cursor-pointer bg-blue-800 border border-gray-600 rounded overflow-hidden transition-transform duration-300 transform hover:scale-105">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-full fill-white" viewBox="0 0 520 520">
                                     <path
@@ -175,3 +175,13 @@
         {{ $allEmail->links() }}
     </div>
 </x-app-layout>
+<script>
+    function allChecked() {
+        const isChecked = document.getElementById('allSelected').checked;
+        const checkboxes = document.querySelectorAll('input[name="allId[]"]');
+
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = isChecked;
+        })
+      }
+</script>

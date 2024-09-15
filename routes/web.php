@@ -40,6 +40,7 @@ Route::middleware('auth')->group(function () {
 
 Route::resource('mailsetup', MailSetupController::class)->middleware('auth');
 Route::resource('sendingemails', SendingEmailController::class)->middleware('auth');
+Route::post('multiwork', [SendingEmailController::class, 'multiwork'])->name('sendingemails.multiwork')->middleware('auth');
 
 
 Route::get('check', function (){

@@ -2,13 +2,16 @@
 
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-5">
         <div class="flex flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4">
-            <div>
+            <div class="flex gap-4">
                 <a href="{{ route('sendingemails.create') }}" class="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">Add Mails</a>
+                <x-form action="{{ route('sendingemails.multiwork') }}" method="POST">
+                    <input type="hidden" name="multiId" id="multiId">
+                    <button type="submit" class="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">Delete</button>
+                </x-form>
             </div>
             <label for="table-search" class="sr-only">Search</label>
             <div class="relative">
-                <div
-                    class="absolute inset-y-0 left-0 rtl:inset-r-0 rtl:right-0 flex items-center ps-3 pointer-events-none">
+                <div class="absolute inset-y-0 left-0 rtl:inset-r-0 rtl:right-0 flex items-center ps-3 pointer-events-none">
                     <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" aria-hidden="true" fill="currentColor"
                         viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                         <path fill-rule="evenodd"
@@ -16,7 +19,7 @@
                             clip-rule="evenodd"></path>
                     </svg>
                 </div>
-                <x-search-form action="{{ route('sendingemails.index') }}" class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search By Oher Emails Address .."/>
+                <x-search-form action="{{ route('sendingemails.index') }}" class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search By Other Emails Address .."/>
             </div>
         </div>
         <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -24,9 +27,9 @@
                 <tr>
                     <th scope="col" class="p-4">
                         <div class="flex items-center">
-                            <input id="checkbox-all-search" type="checkbox"
+                            <input onclick="allChecked()" id="allSelected" type="checkbox"
                                 class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                            <label for="checkbox-all-search" class="sr-only">checkbox</label>
+                            <label for="allSelected" class="sr-only">checkbox</label>
                         </div>
                     </th>
                     <th scope="col" class="px-6 py-3">
@@ -54,13 +57,12 @@
             </thead>
             <tbody>
                 @foreach ($sendingEmails as $email)
-                    <tr
-                        class=" bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                    <tr class=" bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                         <td class="w-4 p-4">
                             <div class="flex items-center">
-                                <input id="checkbox-table-search-1" type="checkbox"
+                                <input onclick="updateSelectedIds()" name="allId[]" value="{{ $email->id }}" id="emailContentCheckBox" type="checkbox"
                                     class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                <label for="checkbox-table-search-1" class="sr-only">checkbox</label>
+                                <label for="emailContentCheckBox" class="sr-only">checkbox</label>
                             </div>
                         </td>
                         <th scope="row"
@@ -127,3 +129,33 @@
     </div>
 
 </x-app-layout>
+<script>
+    function allChecked() {
+        const isChecked = document.getElementById('allSelected').checked;
+        const checkboxes = document.querySelectorAll('input[name="allId[]"]');
+
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = isChecked; // Check or uncheck all checkboxes
+        });
+
+        // Update the hidden input with selected IDs
+        updateSelectedIds();
+    }
+
+    function updateSelectedIds() {
+        const checkboxes = document.querySelectorAll('input[name="allId[]"]:checked'); // Only selected checkboxes
+        const hiddenInput = document.getElementById('multiId');
+
+        let selectedIds = [];
+
+        checkboxes.forEach(checkbox => {
+            selectedIds.push(checkbox.value); // Collect only the values of checked checkboxes
+        });
+
+        // Set the concatenated IDs as the value of the hidden input
+        hiddenInput.value = selectedIds.join(',');
+    }
+
+    // Attach the `updateSelectedIds()` to run on page load in case some checkboxes are pre-selected
+    document.addEventListener('DOMContentLoaded', updateSelectedIds);
+</script>
