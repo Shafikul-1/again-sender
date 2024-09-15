@@ -5,6 +5,8 @@
         $inputAttributeClass =
             'px-4 py-3 bg-[#f0f1f2] focus:bg-transparent w-full text-sm border outline-[#007bff] rounded transition-all dark:focus:text-white';
     @endphp
+
+    <h2 class="font-bold text-center dark:text-white text-4xl mt-5">Setup Mail Update Form</h2>
    <div onclick="showModal()" class="flex items-center justify-end mt-3 w-full h-full button">
     <a href="#_"
         class="relative rounded px-5 py-2.5 overflow-hidden group bg-green-500 hover:bg-gradient-to-r hover:from-green-500 hover:to-green-400 text-white hover:ring-2 hover:ring-offset-2 hover:ring-green-400 transition-all ease-out duration-300">
@@ -47,9 +49,7 @@
     </div>
 </div>
 
-
     <x-form action="{{ route('mailsetup.update', $editData->id) }}" method="PUT"
-        formHeading="<h2 class='font-extrabold text-4xl dark:text-white text-center'>Mail Setup Form</h2>"
         :fields="[
             [
                 'type' => 'text',
@@ -240,13 +240,14 @@
         :submit="[
             'text' => 'Submit',
             'attributes' => [
-                'class' => 'bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700'
+                'class' => 'bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 w-['.'7rem'.'] h-['.'3rem'.']'
             ]
         ]"
-        class="space-y-6 font-[sans-serif] text-[#333] max-w-md mx-auto submitForm">
+         class="space-y-6 font-[sans-serif] text-[#333] max-w-full mx-auto submitForm grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-6" >
 
-        <h3 class="text-3xl font-bold dark:text-white">Other Links</h3>
-        <div class="otherLinks flex gap-4">
+       <div class="">
+        <h3 class="text-2xl font-bold dark:text-white">Other Links</h3>
+        <div class="otherLinks flex gap-4 mt-5 ">
             @foreach ($editData->other_links as $index => $otherLinks)
                 <div class="relative rounded-full border p-3 dark:border-white" data-index="{{ $otherLinks['linkIndex'] }}">
                     <i class="fa fa-solid fa-xmark absolute top-[-15px] right-0 dark:text-white cursor-pointer" onclick="otherIconRemove(this)"></i>
@@ -256,60 +257,14 @@
                 </div>
             @endforeach
         </div>
+       </div>
 
     </x-form>
 
     <script>
         let otherLinksData = @json($editData->other_links);
         let linkIndex = otherLinksData.length;
-        const modal = document.querySelector('.modal');
-
-        function hideModal() {
-            modal.classList.add('hidden')
-        }
-
-        function showModal() {
-            modal.classList.add('flex')
-            modal.classList.remove('hidden');
-        }
-
-        function addLinks() {
-            let otherLinksContainer = document.querySelector('.otherLinks');
-            const iconLink = document.querySelector('input[other-icon-link="iconlink"]');
-            const yourLink = document.querySelector('input[other-acc-link="yourlink"]');
-            otherLinksContainer.innerHTML += `
-                <div class="relative rounded-full border p-3 dark:border-white" data-index="${linkIndex}">
-                    <i class="fa fa-solid fa-xmark absolute top-[-15px] right-0 dark:text-white cursor-pointer" onclick="otherIconRemove(this)"></i>
-                    <a href="${yourLink.value}">
-                        <img width="25px" src="${iconLink.value}" alt="">
-                    </a>
-                </div>
-            `;
-
-            const other_data = {
-                yourLink: yourLink.value,
-                iconLink: iconLink.value,
-                linkIndex: linkIndex // Add index to the object
-            };
-
-            otherLinksData.push(other_data);
-            linkIndex++;
-
-            modal.classList.add('hidden');
-            iconLink.value = '';
-            yourLink.value = '';
-        }
-
-        document.querySelector('.submitForm').addEventListener('submit', function(e) {
-            const otherLinksDataField = document.getElementById('otherLinksArray');
-            otherLinksDataField.value = JSON.stringify(otherLinksData);
-        });
-
-        function otherIconRemove(element) {
-            const parentElement = element.parentElement;
-            const dataIndex = Number(parentElement.getAttribute('data-index'));
-            otherLinksData = otherLinksData.filter(item => item.linkIndex !== dataIndex);
-            parentElement.remove();
-        }
     </script>
+
+    @vite(['resources/js/modal.js']);
 </x-app-layout>

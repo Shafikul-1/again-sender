@@ -5,6 +5,7 @@
         $inputAttributeClass =
             'px-4 py-3 bg-[#f0f1f2] focus:bg-transparent w-full text-sm border outline-[#007bff] rounded transition-all dark:focus:text-white';
     @endphp
+    <h2 class="text-center font-bold text-4xl dark:text-white mt-5">Mail Setup Form </h2>
 
     <div onclick="showModal()" class="flex items-center justify-end mt-3 w-full h-full button">
         <a href="#_"
@@ -49,7 +50,6 @@
     </div>
 
     <x-form action="{{ route('mailsetup.store') }}" method="POST"
-        formHeading="<h2 class='font-extrabold text-4xl dark:text-white text-center'>Mail Setup Form</h2>"
         :fields="[
             [
                 'type' => 'text',
@@ -241,12 +241,18 @@
                 'class' => 'bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700'
             ]
         ]"
-        class="space-y-6 font-[sans-serif] text-[#333] max-w-md mx-auto submitForm">
+        class="space-y-6 font-[sans-serif] text-[#333] max-w-full mx-auto submitForm grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-6" >
 
         <div class="otherLinks flex gap-4">
             <!-- All ICon Show -->
         </div>
+        {{-- <div class="space-y-4">
+             <!-- If Other Input Fild Add -->
+        </div> --}}
     </x-form>
-
+<script>
+    let otherLinksData = [];
+    let linkIndex = 0;
+</script>
 @vite(['resources/js/modal.js']);
 </x-app-layout>

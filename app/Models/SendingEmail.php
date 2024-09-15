@@ -29,5 +29,8 @@ class SendingEmail extends Model
         return $this->hasMany(MailContent::class, 'id', 'mail_content_id');
     }
 
+    public function mail_setup(){
+        return $this->hasMany(MailSetup::class, 'id', 'mailsetup_id');
+    }
 
 }

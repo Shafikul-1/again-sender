@@ -2,6 +2,7 @@
     'cols' => '',
     'rows' => '',
     'name' => '',
+    'value'
 ])
 <style>
     .tox-statusbar__branding {
@@ -18,7 +19,7 @@
     }
 </style>
 <textarea name="{{ $name }}" id="texteditor" cols="{{ $cols }}" rows="{{ $rows }}"
-    {{ $attributes }}></textarea>
+    {{ $attributes }}>{!! $value ?? '' !!}</textarea>
 <script src="https://cdn.tiny.cloud/1/5ltg59f45063hbolbqqrx1glc9kr9e4yg7gcb5op8r26epcg/tinymce/7/tinymce.min.js"
     referrerpolicy="origin"></script>
 <script>
@@ -41,17 +42,17 @@
         ],
         setup: function(editor) {
             // Load content from sessionStorage if available
-            const savedContent = sessionStorage.getItem('tinymce_content');
-            if (savedContent) {
-                editor.on('init', function() {
-                    editor.setContent(savedContent);
-                });
-            }
+            // const savedContent = sessionStorage.getItem('tinymce_content');
+            // if (savedContent) {
+            //     editor.on('init', function() {
+            //         editor.setContent(savedContent);
+            //     });
+            // }
 
-            // Save content to sessionStorage on change
-            editor.on('change', function() {
-                sessionStorage.setItem('tinymce_content', editor.getContent());
-            });
+            // // Save content to sessionStorage on change
+            // editor.on('change', function() {
+            //     sessionStorage.setItem('tinymce_content', editor.getContent());
+            // });
 
         },
         // ai_request: (request, respondWith) => respondWith.string(() => Promise.reject(

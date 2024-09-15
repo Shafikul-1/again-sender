@@ -12,6 +12,7 @@ use App\Jobs\SendingEmailJob;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class SendingEmailController extends Controller
 {
@@ -43,7 +44,7 @@ class SendingEmailController extends Controller
      */
     public function create()
     {
-        $userSetupEmails = MailSetup::pluck('mail_from');
+        $userSetupEmails = MailSetup::where('user_id', Auth::user()->id)->pluck('mail_from');
         return view('mail.sendingEmails.add', compact('userSetupEmails'));
     }
 
@@ -94,6 +95,9 @@ class SendingEmailController extends Controller
 
         // Prepare data for batch insertion
         $mailsetupDetails = MailSetup::where('mail_from', $request->mail_form)->where('user_id', Auth::user()->id)->first();
+        if(!$mailsetupDetails){
+            return redirect()->back()->withErrors('Select email is not yours')->withInput();
+        }
         $mailsetup_id = $mailsetupDetails->id;
 
         $send_time = $request->send_time;
@@ -141,9 +145,13 @@ class SendingEmailController extends Controller
      */
     public function edit(string $id)
     {
-        $sendingEmails = SendingEmail::with('mail_content')->find($id);
-        // return $sendingEmails;
-        return view('mail.sendingEmails.edit', compact('sendingEmails'));
+        $sendingEmailEdit = SendingEmail::with('mail_content')->findOrFail($id);
+        if(!Gate::allows('checkPermission', $sendingEmailEdit)){
+            abort(403, 'Not Permiton This Content');
+         }
+         $userSetupEmails = MailSetup::where('user_id', Auth::user()->id)->get(['id', 'mail_from']);
+        // return $userSetupEmails;
+        return view('mail.sendingEmails.edit', compact(['sendingEmailEdit', 'userSetupEmails']));
     }
 
     /**
@@ -151,7 +159,25 @@ class SendingEmailController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $sendingEmailData = SendingEmail::findOrFail($id);
+        if(!Gate::allows('checkPermission', $sendingEmailData)){
+            abort(403, 'Not Permiton This Content');
+         }
+         $request->validate([
+            'mails' => 'required|string',
+            'send_time' => 'required|string',
+            'mail_subject' => 'required|string',
+            'mail_body' => 'required',
+            'mail_form' => 'required|numeric',
+            'mail_files' => 'nullable|array',
+            'mail_files.*' => 'file|mimes:jpg,jpeg,png,pdf,doc,docx|max:10100',
+            'schedule_time' => ['required', 'regex:/^(\d+(\|\d+)*)?$/'],
+        ]);
+
+
+         return $request;
+
+
     }
 
     /**
@@ -159,7 +185,7 @@ class SendingEmailController extends Controller
      */
     public function destroy(string $id)
     {
-        $deleteSendingEmail = SendingEmail::find($id)->delete();
+        $deleteSendingEmail = SendingEmail::findOrFail($id)->delete();
         return $deleteSendingEmail ? redirect()->back()->with('success', 'Mail Delete successful') :  redirect()->back()->with('error', 'someting went wrong');
     }
 
@@ -207,7 +233,7 @@ class SendingEmailController extends Controller
         foreach ($overSendTime as $key => $value) {
             try {
                 SendingEmail::where('id', $value->id)->update(['send_time' => $currentTime->addMinutes($value->wait_minute)]);
-            } catch (\Throwable $th) {
+            } catch (Throwable $th) {
                 Log::error('Check Time Error => ' . $th->getMessage());
             }
         }

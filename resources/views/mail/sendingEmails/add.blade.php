@@ -104,12 +104,9 @@
         </div>
 
         <div class="space-y-4">
-        @error('mail_body')
-            <p class="text-red-500">{{ $message }}</p>
-        @enderror
-        @error('mail_files')
-            <p class="text-red-500">{{ $message }}</p>
-        @enderror
+            @error('mail_body')
+                <p class="text-red-500">{{ $message }}</p>
+            @enderror
 
             <div>
                 <x-texteditor name="mail_body" rows="25" cols="40" class="w-full border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
@@ -123,23 +120,4 @@
 
 
 
-<script>
-    document.getElementById('schedule_time').addEventListener('focus', function() {
-        if (!document.getElementById('timeInfo')) {
-            var newElement = document.createElement('span');
-            newElement.id = 'timeInfo';
-            newElement.className =
-                'dark:text-white text-sm absolute top-[-4rem] left-6 max-w-full bg-gray-700 rounded-md shadow-lg shadow-fuchsia-600 text-center py-1 px-2';
-            newElement.innerHTML =
-                'input only use time <b>number</b> no space<br> If you want random time, then use <span class="font-bold text-blue-400">|</span> add minute';
-
-            this.parentNode.appendChild(newElement);
-        }
-    });
-    document.getElementById('schedule_time').addEventListener('blur', function() {
-        var infoElement = document.getElementById('timeInfo');
-        if (infoElement) {
-            infoElement.remove();
-        }
-    });
-</script>
+@vite(['resources/js/modal.js']);

@@ -6,6 +6,7 @@ use App\Models\MailSetup;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 
 class MailSetupController extends Controller
@@ -127,7 +128,10 @@ class MailSetupController extends Controller
      */
     public function edit(string $id)
     {
-        $editData = MailSetup::find($id);
+        $editData = MailSetup::findOrFail($id);
+        if(!Gate::allows('checkPermission', $editData)){
+           abort(403, 'Not Permiton This Content');
+        }
         // return $editData;
         return view('mail.setup.edit', compact('editData'));
     }
@@ -137,6 +141,10 @@ class MailSetupController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        $updateData = MailSetup::findOrFail($id);
+        if(!Gate::allows('checkPermission', $updateData)){
+           abort(403, 'Not Permiton This Content');
+        }
         $request->validate([
             'mail_transport' => 'required|string',
             'mail_host' => 'required|string',
@@ -158,6 +166,7 @@ class MailSetupController extends Controller
                 $validator = Validator::make($item, [
                     'iconLink' => 'required|string',
                     'yourLink' => 'required|string',
+                    'linkIndex' => 'required|integer',
                 ]);
 
                 if ($validator->fails()) {
@@ -172,7 +181,7 @@ class MailSetupController extends Controller
                 'sender_number' => 'required|numeric',
             ]);
         }
-        // return $request;
+        // return $otherLink;
         $mailPass =  str_replace(' ', '', $request->mail_password);
         $updateMail =  MailSetup::where('id', $id)->update([
             'mail_transport' => $request->mail_transport,
@@ -198,7 +207,7 @@ class MailSetupController extends Controller
      */
     public function destroy(string $id)
     {
-        $deleteMail = MailSetup::find($id)->delete();
+        $deleteMail = MailSetup::findOrFail($id)->delete();
         return $deleteMail ? redirect()->back()->with('success', 'Mail Delete Successful') :  redirect()->back()->with('error', 'someting went wrong');
     }
 }
