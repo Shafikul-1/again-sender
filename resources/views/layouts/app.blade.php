@@ -11,10 +11,9 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
         {{-- <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio"></script> --}}
-        <script src="{{ asset('otherflemwork/tailwind.js') }}"></script>
 
         <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/tailwind.js', 'resources/js/fontawesome.js'])
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
@@ -44,6 +43,5 @@
         </div>
     @endif
         {{-- <script src="https://kit.fontawesome.com/ed5a9b6893.js" crossorigin="anonymous"></script> --}}
-        <script src="{{ asset('otherflemwork/fontawesome.js') }}"></script>
     </body>
 </html>
