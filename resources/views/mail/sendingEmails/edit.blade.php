@@ -50,19 +50,6 @@
                 'class' => $inputAttributeClass,
             ],
         ],
-        // [
-        //     'type' => 'text',
-        //     'name' => 'mail_body',
-        //     'id' => 'mail_body',
-        //     'placeholder' => 'Enter your mail_body',
-        //     'errorClass' => $errorClass,
-        //     'wrapper' => [
-        //         'class' => $wrapper,
-        //     ],
-        //     'attributes' => [
-        //         'class' => $inputAttributeClass,
-        //     ],
-        // ],
         [
             'type' => 'text',
             'name' => 'schedule_time',
@@ -95,17 +82,17 @@
     ]"
         class="space-y-6 font-[sans-serif] text-[#333] max-w-full mx-auto submitForm grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-6" enctype="multipart/form-data">
         <div class="relative flex items-center flex-col">
-            <select name="mail_form" id="mail_form"
+            <select name="mail_from" id="mail_from"
                 class="px-4 py-3 bg-[#f0f1f2] focus:bg-transparent w-full text-sm border outline-[#007bff] rounded transition-all dark:focus:text-white">
                 @foreach ($userSetupEmails as $email)
-                    <option value="{{ $email->id }}"
+                    <option value="{{ $email->mail_from }}"
                         {{ $email->id == $sendingEmailEdit->mailsetup_id ? 'selected' : '' }}
                         class="text-black bg-gray-200">
                         {{ $email->mail_from }}
                     </option>
                 @endforeach
             </select>
-            @error('mail_form')
+            @error('mail_from')
                 <p class="text-red-500 text-start">{{ $message }}</p>
             @enderror
         </div>

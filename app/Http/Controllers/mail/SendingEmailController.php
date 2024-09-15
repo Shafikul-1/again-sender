@@ -12,6 +12,7 @@ use App\Jobs\SendingEmailJob;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Gate;
 
 class SendingEmailController extends Controller
@@ -29,8 +30,8 @@ class SendingEmailController extends Controller
         if ($status = $request->query('status')) {
             $query->where('status', $status);
         }
-        if($search = request()->input('search')){
-            $query->where('mails', 'LIKE' , '%' . $search . '%');
+        if ($search = request()->input('search')) {
+            $query->where('mails', 'LIKE', '%' . $search . '%');
         }
         $query->where('user_id', Auth::user()->id);
 
@@ -95,7 +96,7 @@ class SendingEmailController extends Controller
 
         // Prepare data for batch insertion
         $mailsetupDetails = MailSetup::where('mail_from', $request->mail_form)->where('user_id', Auth::user()->id)->first();
-        if(!$mailsetupDetails){
+        if (!$mailsetupDetails) {
             return redirect()->back()->withErrors('Select email is not yours')->withInput();
         }
         $mailsetup_id = $mailsetupDetails->id;
@@ -146,10 +147,10 @@ class SendingEmailController extends Controller
     public function edit(string $id)
     {
         $sendingEmailEdit = SendingEmail::with('mail_content')->findOrFail($id);
-        if(!Gate::allows('checkPermission', $sendingEmailEdit)){
+        if (!Gate::allows('checkPermission', $sendingEmailEdit)) {
             abort(403, 'Not Permiton This Content');
-         }
-         $userSetupEmails = MailSetup::where('user_id', Auth::user()->id)->get(['id', 'mail_from']);
+        }
+        $userSetupEmails = MailSetup::where('user_id', Auth::user()->id)->get(['id', 'mail_from']);
         // return $userSetupEmails;
         return view('mail.sendingEmails.edit', compact(['sendingEmailEdit', 'userSetupEmails']));
     }
@@ -159,25 +160,62 @@ class SendingEmailController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $sendingEmailData = SendingEmail::findOrFail($id);
-        if(!Gate::allows('checkPermission', $sendingEmailData)){
+
+        $sendingEmailData = SendingEmail::with('mail_content')->findOrFail($id);
+        if (!Gate::allows('checkPermission', $sendingEmailData)) {
             abort(403, 'Not Permiton This Content');
-         }
-         $request->validate([
+        }
+        $request->validate([
             'mails' => 'required|string',
             'send_time' => 'required|string',
             'mail_subject' => 'required|string',
             'mail_body' => 'required',
-            'mail_form' => 'required|numeric',
-            'mail_files' => 'nullable|array',
-            'mail_files.*' => 'file|mimes:jpg,jpeg,png,pdf,doc,docx|max:10100',
+            'mail_from' => 'required|string',
             'schedule_time' => ['required', 'regex:/^(\d+(\|\d+)*)?$/'],
         ]);
 
+        $oldFiles = $sendingEmailData->mail_content[0]->mail_files;
+        $fileData = [];
+        if ($request->has('mail_files')) {
+            $request->validate([
+                'mail_files' => 'required|array',
+                'mail_files.*' => 'file|mimes:jpg,jpeg,png,pdf,doc,docx|max:10100',
+            ]);
+            if (!empty($oldFiles)) {
+                foreach ($oldFiles as $fileName) {
+                    if (!File::exists(public_path() . '/mailFile/' . $fileName)) {
+                        continue;
+                    }
+                    File::delete(public_path() . '/mailFile/' . $fileName);
+                }
+            }
 
-         return $request;
+            foreach ($request->mail_files as $files) {
+                $ext = $files->getClientOriginalExtension();
+                $rename = time() . '_' . uniqid() . '.' . $ext;
+                $files->move(public_path() . '/mailFile', $rename);
+                $fileData[] = $rename;
+            }
+        } else{
+            $fileData = $oldFiles;
+        }
 
+        MailContent::where('id', $sendingEmailData->mail_content_id)->update([
+            'mail_subject' => $request->mail_subject,
+            'mail_body' => $request->mail_body,
+            'mail_files' => $fileData,
+        ]);
 
+        $setupEmailId = MailSetup::where('mail_from', $request->mail_from)->first();
+        // return $request;
+        SendingEmail::where('id', $id)->update([
+            'mails' => $request->mails,
+            'mail_form' => $request->mail_from,
+            'send_time' => $request->send_time,
+            'wait_minute' => $request->schedule_time,
+            'mailsetup_id' => $setupEmailId['id'],
+        ]);
+        return redirect()->route('sendingemails.index')->with('success', 'Update Successful');
     }
 
     /**
