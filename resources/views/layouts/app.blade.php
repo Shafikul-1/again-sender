@@ -34,7 +34,15 @@
                 {{ $slot }}
             </main>
         </div>
-
+        @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li class="text-red-500 font-bold">{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
         {{-- <script src="https://kit.fontawesome.com/ed5a9b6893.js" crossorigin="anonymous"></script> --}}
         <script src="{{ asset('otherflemwork/fontawesome.js') }}"></script>
     </body>

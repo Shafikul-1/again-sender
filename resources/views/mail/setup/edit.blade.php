@@ -7,7 +7,7 @@
     @endphp
    <div onclick="showModal()" class="flex items-center justify-end mt-3 w-full h-full button">
     <a href="#_"
-        class="relative rounded px-5 py-2.5 overflow-hidden group bg-green-500 relative hover:bg-gradient-to-r hover:from-green-500 hover:to-green-400 text-white hover:ring-2 hover:ring-offset-2 hover:ring-green-400 transition-all ease-out duration-300">
+        class="relative rounded px-5 py-2.5 overflow-hidden group bg-green-500 hover:bg-gradient-to-r hover:from-green-500 hover:to-green-400 text-white hover:ring-2 hover:ring-offset-2 hover:ring-green-400 transition-all ease-out duration-300">
         <span
             class="absolute right-0 w-8 h-32 -mt-12 transition-all duration-1000 transform translate-x-12 bg-white opacity-10 rotate-12 group-hover:-translate-x-40 ease"></span>
         <span class="relative text-black">Add Signature Link</span>
@@ -15,7 +15,7 @@
 </div>
 
 <div
-    class="modal hidden fixed inset-0 p-4 flex flex-wrap justify-center items-center w-full h-full z-[1000] before:fixed before:inset-0 before:w-full before:h-full before:bg-[rgba(0,0,0,0.5)] overflow-auto font-[sans-serif]">
+    class="modal hidden fixed inset-0 p-4  flex-wrap justify-center items-center w-full h-full z-[1000] before:fixed before:inset-0 before:w-full before:h-full before:bg-[rgba(0,0,0,0.5)] overflow-auto font-[sans-serif]">
     <div class="w-full max-w-lg bg-white shadow-lg rounded-lg p-8 relative">
         <svg onclick="hideModal()" xmlns="http://www.w3.org/2000/svg"
             class="w-3.5 cursor-pointer shrink-0 fill-gray-400 hover:fill-red-500 float-right"
@@ -48,7 +48,7 @@
 </div>
 
 
-<x-form action="{{ route('mailsetup.update', $editData->id) }}" method="PUT"
+    <x-form action="{{ route('mailsetup.update', $editData->id) }}" method="PUT"
         formHeading="<h2 class='font-extrabold text-4xl dark:text-white text-center'>Mail Setup Form</h2>"
         :fields="[
             [
@@ -246,27 +246,22 @@
         class="space-y-6 font-[sans-serif] text-[#333] max-w-md mx-auto submitForm">
 
         <h3 class="text-3xl font-bold dark:text-white">Other Links</h3>
-        @foreach ($editData->other_links as $index => $otherLinks)
-            <div class="flex items-center space-x-4 mb-4">
-                <div class="px-4 py-2 border rounded w-1/2">
-                    <p class="dark:text-white">Your Link</p>
-                    <input type="text" name="other_links[{{ $index }}][yourLink]" value="{{ is_array($otherLinks) ? $otherLinks['yourLink'] : $otherLinks->yourLink }}" class="max-w-full">
-                </div>
-                <div class="px-4 py-2 border rounded w-1/2">
-                    <p class="dark:text-white">other Link</p>
-                    <input type="text" name="other_links[{{ $index }}][iconLink]" value="{{ is_array($otherLinks) ? $otherLinks['iconLink'] : $otherLinks->iconLink }}" class="max-w-full">
-                </div>
-            </div>
-        @endforeach
-
         <div class="otherLinks flex gap-4">
-            <!-- All ICon Show -->
+            @foreach ($editData->other_links as $index => $otherLinks)
+                <div class="relative rounded-full border p-3 dark:border-white" data-index="{{ $otherLinks['linkIndex'] }}">
+                    <i class="fa fa-solid fa-xmark absolute top-[-15px] right-0 dark:text-white cursor-pointer" onclick="otherIconRemove(this)"></i>
+                    <a href="{{ $otherLinks['yourLink'] }}">
+                        <img width="25px" src="{{ $otherLinks['iconLink'] }}" alt="">
+                    </a>
+                </div>
+            @endforeach
         </div>
+
     </x-form>
 
     <script>
-        let otherLinksData = [];
-        let linkIndex = 0;
+        let otherLinksData = @json($editData->other_links);
+        let linkIndex = otherLinksData.length;
         const modal = document.querySelector('.modal');
 
         function hideModal() {
@@ -274,6 +269,7 @@
         }
 
         function showModal() {
+            modal.classList.add('flex')
             modal.classList.remove('hidden');
         }
 

@@ -6,16 +6,19 @@ use App\Models\MailSetup;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class MailSetupController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         // $allEmail = MailSetup::where('user_id', Auth::user()->id)->paginate(10);
-        $allEmail = MailSetup::select(['id','mail_from'])->withCount([
+        $query = MailSetup::query();
+
+        $query->select(['id', 'mail_from'])->withCount([
             'sending_emails as noaction_count' => function ($query) {
                 $query->where('status', 'noaction');
             },
@@ -31,8 +34,11 @@ class MailSetupController extends Controller
             'sending_emails as success_count' => function ($query) {
                 $query->where('status', 'success');
             },
-        ])
-        ->where('user_id', Auth::user()->id)->paginate(10);
+        ]);
+        if ($search = request()->input('search')) {
+            $query->where('mail_from', 'LIKE', '%' . $search . '%');
+        }
+        $allEmail = $query->where('user_id', Auth::user()->id)->paginate(10)->appends(['search', $search]);
         // return $allEmail;
         return view('mail.setup.all', compact('allEmail'));
     }
@@ -60,13 +66,30 @@ class MailSetupController extends Controller
             'mail_from' => 'required|string',
             'mail_sender_name' => 'required|string',
         ]);
+        $otherLink = [];
+        if ($request->has('other_links')) {
+            $request->validate([
+                'other_links' => 'required|json',
+            ]);
+            $jsonData = json_decode($request->other_links, true);
+            foreach ($jsonData as $key => $item) {
+                $validator = Validator::make($item, [
+                    'iconLink' => 'required|string',
+                    'yourLink' => 'required|string',
+                    'linkIndex' => 'required|numeric',
+                ]);
 
-        $otherLinks = $request->other_links;
-        $otherLink = json_decode($otherLinks, true);
+                if ($validator->fails()) {
+                    return redirect()->back()->withErrors($validator)->withInput();
+                }
+                $otherLink[] = $validator->validate();
+            }
+        }
 
         if ($request->sender_number) {
             $request->validate([
-                'sender_number' => 'required|digits:11',
+                'sender_number' => 'required|numeric',
+                // 'sender_number' => 'required|digits:11',
             ]);
         }
 
@@ -125,15 +148,31 @@ class MailSetupController extends Controller
             'mail_sender_name' => 'required|string',
         ]);
 
-        // $otherLinks = $request->other_links;
-        // $otherLink = json_decode($otherLinks, true);
+        $otherLink = [];
+        if ($request->has('other_links')) {
+            $request->validate([
+                'other_links' => 'required|json',
+            ]);
+            $jsonData = json_decode($request->other_links, true);
+            foreach ($jsonData as $item) {
+                $validator = Validator::make($item, [
+                    'iconLink' => 'required|string',
+                    'yourLink' => 'required|string',
+                ]);
 
-        if ($request->sender_number) {
+                if ($validator->fails()) {
+                    return redirect()->back()->withErrors($validator)->withInput();
+                }
+                $otherLink[] = $validator->validate();
+            }
+        }
+
+        if ($request->has('sender_number')) {
             $request->validate([
                 'sender_number' => 'required|numeric',
             ]);
         }
-
+        // return $request;
         $mailPass =  str_replace(' ', '', $request->mail_password);
         $updateMail =  MailSetup::where('id', $id)->update([
             'mail_transport' => $request->mail_transport,
@@ -145,7 +184,7 @@ class MailSetupController extends Controller
             'mail_from' => $request->mail_from,
             'mail_sender_name' => $request->mail_sender_name,
             'sender_department' => $request->sender_department,
-            // 'other_links' => $otherLink,
+            'other_links' => $otherLink,
             'sender_company_logo' => $request->sender_company_logo,
             'sender_website' => $request->sender_website,
             'sender_number' => $request->sender_number,

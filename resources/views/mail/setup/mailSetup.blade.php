@@ -8,7 +8,7 @@
 
     <div onclick="showModal()" class="flex items-center justify-end mt-3 w-full h-full button">
         <a href="#_"
-            class="relative rounded px-5 py-2.5 overflow-hidden group bg-green-500 relative hover:bg-gradient-to-r hover:from-green-500 hover:to-green-400 text-white hover:ring-2 hover:ring-offset-2 hover:ring-green-400 transition-all ease-out duration-300">
+            class="relative rounded px-5 py-2.5 overflow-hidden group bg-green-500 hover:bg-gradient-to-r hover:from-green-500 hover:to-green-400 text-white hover:ring-2 hover:ring-offset-2 hover:ring-green-400 transition-all ease-out duration-300">
             <span
                 class="absolute right-0 w-8 h-32 -mt-12 transition-all duration-1000 transform translate-x-12 bg-white opacity-10 rotate-12 group-hover:-translate-x-40 ease"></span>
             <span class="relative text-black">Add Signature Link</span>
@@ -16,7 +16,7 @@
     </div>
 
     <div
-        class="modal hidden fixed inset-0 p-4 flex flex-wrap justify-center items-center w-full h-full z-[1000] before:fixed before:inset-0 before:w-full before:h-full before:bg-[rgba(0,0,0,0.5)] overflow-auto font-[sans-serif]">
+        class="modal hidden fixed inset-0 p-4  flex-wrap justify-center items-center w-full h-full z-[1000] before:fixed before:inset-0 before:w-full before:h-full before:bg-[rgba(0,0,0,0.5)] overflow-auto font-[sans-serif]">
         <div class="w-full max-w-lg bg-white shadow-lg rounded-lg p-8 relative">
             <svg onclick="hideModal()" xmlns="http://www.w3.org/2000/svg"
                 class="w-3.5 cursor-pointer shrink-0 fill-gray-400 hover:fill-red-500 float-right"
@@ -258,6 +258,7 @@
         }
 
         function showModal() {
+            modal.classList.add('flex');
             modal.classList.remove('hidden');
         }
 
