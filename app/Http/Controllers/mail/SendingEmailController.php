@@ -147,6 +147,9 @@ class SendingEmailController extends Controller
     public function edit(string $id)
     {
         $sendingEmailEdit = SendingEmail::with('mail_content')->findOrFail($id);
+        if($sendingEmailEdit->status != 'noaction'){
+            return redirect()->route('sendingemails.index')->with('error', 'Please check Email staus');
+        }
         if (!Gate::allows('checkPermission', $sendingEmailEdit)) {
             abort(403, 'Not Permiton This Content');
         }
@@ -160,8 +163,10 @@ class SendingEmailController extends Controller
      */
     public function update(Request $request, string $id)
     {
-
         $sendingEmailData = SendingEmail::with('mail_content')->findOrFail($id);
+        if($sendingEmailData->status != 'noaction'){
+            return redirect()->route('sendingemails.index')->with('error', 'Please check Email staus');
+        }
         if (!Gate::allows('checkPermission', $sendingEmailData)) {
             abort(403, 'Not Permiton This Content');
         }
@@ -223,9 +228,26 @@ class SendingEmailController extends Controller
      */
     public function destroy(string $id)
     {
-        $deleteSendingEmail = SendingEmail::findOrFail($id)->delete();
+        $deleteSendingEmail = SendingEmail::findOrFail($id);
+        $mailContentId = SendingEmail::where('mail_content_id', $deleteSendingEmail->mail_content_id)->get();
+        if(count($mailContentId) > 1){
+            $deleteSendingEmail->delete();
+        } else{
+            $contentDelete = MailContent::findOrFail($deleteSendingEmail->mail_content_id);
+            if(!empty($contentDelete->mail_files)){
+                foreach($contentDelete->mail_files as $file){
+                    if(!File::exists(public_path() . 'mailFile' . $file)){
+                        continue;
+                    }
+                    File::delete(public_path() . 'mailFile' . $file);
+                }
+            }
+            $contentDelete->delete();
+        }
+
         return $deleteSendingEmail ? redirect()->back()->with('success', 'Mail Delete successful') :  redirect()->back()->with('error', 'someting went wrong');
     }
+
 
     /**
      * Current time less then equal `>=` all waiting sent emails add SendingEmailJob table
