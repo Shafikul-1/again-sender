@@ -1,4 +1,5 @@
 <x-app-layout>
+    @section('title', 'Add Email')
     @php
         $errorClass = 'mt-[4rem] text-sm absolute left-0 w-full';
         $wrapper = 'relative flex items-center';

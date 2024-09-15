@@ -289,6 +289,9 @@ class SendingEmailController extends Controller
         return "Time Update Successful";
     }
 
+    /**
+     * Multi work this delete ssending email
+     */
     public function multiwork(Request $request)
     {
         $validated = $request->validate([
@@ -314,6 +317,9 @@ class SendingEmailController extends Controller
         }
     }
 
+    /**
+     * Private function file delete
+     */
     private function deleteFile($content, $data)
     {
         try {

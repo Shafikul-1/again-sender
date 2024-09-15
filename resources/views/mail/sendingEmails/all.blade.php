@@ -1,5 +1,5 @@
 <x-app-layout>
-
+    @section('title', 'All Sending Emails')
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-5">
         <div class="flex flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4">
             <div class="flex gap-4">

@@ -1,4 +1,5 @@
 <x-app-layout>
+    @section('title', 'User Deshboard')
 <div class="bg-purple-900 text-white">
 
     <div class="container mx-auto px-4 py-6">
