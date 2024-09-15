@@ -57,7 +57,29 @@
             </thead>
             <tbody>
                 @foreach ($sendingEmails as $email)
-                    <tr class=" bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                @php
+                    $statusColor = '';
+                    switch ($email->status) {
+                        case 'success':
+                            $statusColor = 'dark:bg-green-800 dark:hover:bg-green-600 hover:text-black';
+                            break;
+                        case 'fail':
+                            $statusColor = 'dark:bg-red-800 dark:hover:bg-red-900';
+                            break;
+                        case 'pending':
+                            $statusColor = 'dark:bg-yellow-600 dark:hover:bg-yellow-900 text-black hover:text-white dark:hover:text-white';
+                            break;
+                        case 'netdisable':
+                            $statusColor = 'dark:bg-red-400 dark:hover:bg-red-400 text-black hover:text-white dark:hover:text-white';
+                            break;
+
+                        default:
+                            $statusColor = 'dark:bg-gray-800 dark:hover:bg-gray-600';
+                            break;
+                    }
+
+                @endphp
+                    <tr class=" bg-white border-b  dark:border-gray-700 hover:bg-gray-50  {{ $statusColor }}">
                         <td class="w-4 p-4">
                             <div class="flex items-center">
                                 <input onclick="updateSelectedIds()" name="allId[]" value="{{ $email->id }}" id="emailContentCheckBox" type="checkbox"

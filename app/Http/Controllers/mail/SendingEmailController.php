@@ -99,20 +99,48 @@ class SendingEmailController extends Controller
         if (!$mailsetupDetails) {
             return redirect()->back()->withErrors('Select email is not yours')->withInput();
         }
+
         $mailsetup_id = $mailsetupDetails->id;
-
-        $send_time = $request->send_time;
         $mail_form = $request->mail_form;
-        $schedule_time = explode('|', $request->schedule_time);
-        // $randomMinute = $schedule_time[array_rand($schedule_time)];
+        // $schedule_time = explode('|', $request->schedule_time);
+        //  // $randomMinute = $schedule_time[array_rand($schedule_time)];
 
-        $sendingMail = array_map(function ($data) use ($mailContent, $send_time, $userId, $schedule_time, $mail_form, $mailsetup_id) {
-            $randomMinute = $schedule_time[array_rand($schedule_time)];
-            $newTime = Carbon::parse($send_time)->addMinutes((int)$randomMinute);
+        // $sendingMail = array_map(function ($data) use ($mailContent, $send_time, $userId, $schedule_time, $mail_form, $mailsetup_id) {
+        //     $randomMinute = $schedule_time[array_rand($schedule_time)];
+        //     $newTime = Carbon::parse($send_time)->addMinutes((int)$randomMinute);
+        //     return [
+        //         'mails' => $data,
+        //         'send_time' => $newTime,
+        //         'wait_minute' => (int)$randomMinute,
+        //         'mail_form' => $mail_form,
+        //         'mailsetup_id' => $mailsetup_id,
+        //         'mail_content_id' => $mailContent->id,
+        //         'created_at' => now(),
+        //         'updated_at' => now(),
+        //         'user_id' => $userId,
+        //     ];
+        // }, $filterEmails);
+
+        $schedule_time = explode('|', $request->schedule_time);
+        $currentTime = Carbon::parse($request->send_time);
+
+        $sendingMail = array_map(function ($data) use ($mailContent, $userId, $schedule_time, $mail_form, $mailsetup_id, &$currentTime) {
+            $wait_minute = 0;
+
+            if (count($schedule_time) === 1) {
+                $randomMinute = (int)$schedule_time[0];
+            } else {
+                $randomMinute = (int)$schedule_time[array_rand($schedule_time)];
+            }
+
+            $wait_minute = $randomMinute;
+            $newTime = $currentTime->copy()->addMinutes($randomMinute);
+            $currentTime = $newTime;
+
             return [
                 'mails' => $data,
                 'send_time' => $newTime,
-                'wait_minute' => (int)$randomMinute,
+                'wait_minute' => $wait_minute,
                 'mail_form' => $mail_form,
                 'mailsetup_id' => $mailsetup_id,
                 'mail_content_id' => $mailContent->id,
@@ -123,8 +151,9 @@ class SendingEmailController extends Controller
         }, $filterEmails);
 
         // Batch insert emails
-        $batchSize = 20;
+        $batchSize = 50;
         $chunks = array_chunk($sendingMail, $batchSize);
+
         foreach ($chunks as $chunk) {
             SendingEmail::insert($chunk);
         }
