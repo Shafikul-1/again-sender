@@ -46,7 +46,9 @@ class SendingEmailController extends Controller
     public function create()
     {
         $userSetupEmails = MailSetup::where('user_id', Auth::user()->id)->pluck('mail_from');
-        return view('mail.sendingEmails.add', compact('userSetupEmails'));
+        $previseFiles = MailContent::where('user_id', Auth::user()->id)->pluck('mail_files');
+        $allFiles = $previseFiles->flatten();
+        return view('mail.sendingEmails.add', compact('userSetupEmails', 'allFiles'));
     }
 
     /**
@@ -64,19 +66,32 @@ class SendingEmailController extends Controller
             'mail_subject' => 'required|string',
             'mail_body' => 'required',
             'mail_form' => 'required|string|not_in:""',
-            'mail_files' => 'nullable|array',
-            'mail_files.*' => 'file|mimes:jpg,jpeg,png,pdf,doc,docx|max:10100',
             'schedule_time' => ['required', 'regex:/^(\d+(\|\d+)*)?$/'],
         ]);
 
         // Handle file uploads
         $mailFileNames = [];
         if ($request->has('mail_files')) {
+            $request->validate([
+                'mail_files' => 'required|array',
+                'mail_files.*' => 'file|mimes:jpg,jpeg,png,pdf,doc,docx|max:10100',
+            ]);
             foreach ($request->mail_files as $files) {
                 $ext = $files->getClientOriginalExtension();
                 $rename = time() . '_' . uniqid() . '.' . $ext;
                 $files->move(public_path() . '/mailFile', $rename);
                 $mailFileNames[] = $rename;
+            }
+        }
+
+        if ($request->mail_previse_file != null) {
+            $request->validate([
+                'mail_previse_file' => 'nullable|string',
+            ]);
+            $getFileName = explode(',', $request->mail_previse_file);
+            // $mailFilNames = array_merge($mailFileNames, $getFileName);
+            foreach ($getFileName as $fileName) {
+                $mailFileNames[] = $fileName;
             }
         }
 
@@ -351,24 +366,44 @@ class SendingEmailController extends Controller
      */
     private function deleteFile($content, $data)
     {
-        try {
-            if (count($content) > 1) {
-                $data->delete();
-            } else {
-                $contentDelete = MailContent::findOrFail($data->mail_content_id);
-                if (!empty($contentDelete->mail_files)) {
-                    foreach ($contentDelete->mail_files as $file) {
-                        if (!File::exists(public_path() . '/mailFile/' . $file)) {
-                            continue;
-                        }
-                        File::delete(public_path() . '/mailFile/' . $file);
-                    }
-                }
-                $contentDelete->delete();
+        $data->delete();
+        return true;
+        // try {
+        //     if (count($content) > 1) {
+        //         $data->delete();
+        //     } else {
+        //         $contentDelete = MailContent::findOrFail($data->mail_content_id);
+        //         if (!empty($contentDelete->mail_files)) {
+        //             foreach ($contentDelete->mail_files as $file) {
+        //                 if (!File::exists(public_path() . '/mailFile/' . $file)) {
+        //                     continue;
+        //                 }
+        //                 File::delete(public_path() . '/mailFile/' . $file);
+        //             }
+        //         }
+        //         $contentDelete->delete();
+        //     }
+        //     return true;
+        // } catch (Throwable $th) {
+        //     return false;
+        // }
+    }
+
+    public function uploadFileDelete($name)
+    {
+        $mailContent  = MailContent::where('user_id', Auth::user()->id)->whereJsonContains('mail_files', $name)->first();
+        if ($mailContent) {
+            $updateFiles = array_diff($mailContent->mail_files, [$name]);
+            $mailContent->mail_files = array_values($updateFiles);
+            $mailContent->save();
+
+            $filePath =  public_path() . '/mailFile/' . $name;
+            if (File::exists($filePath)) {
+                File::delete($filePath);
             }
-            return true;
-        } catch (Throwable $th) {
-            return false;
+            return redirect()->back()->with('success', 'file Delete Successful');
+        } else {
+            return redirect()->back()->with('error', 'No File Found');
         }
     }
 }

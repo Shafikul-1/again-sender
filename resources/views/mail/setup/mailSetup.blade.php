@@ -17,8 +17,7 @@
         </a>
     </div>
 
-    <div
-        class="modal hidden fixed inset-0 p-4  flex-wrap justify-center items-center w-full h-full z-[1000] before:fixed before:inset-0 before:w-full before:h-full before:bg-[rgba(0,0,0,0.5)] overflow-auto font-[sans-serif]">
+    <x-model>
         <div class="w-full max-w-lg bg-white shadow-lg rounded-lg p-8 relative">
             <svg onclick="hideModal()" xmlns="http://www.w3.org/2000/svg"
                 class="w-3.5 cursor-pointer shrink-0 fill-gray-400 hover:fill-red-500 float-right"
@@ -48,7 +47,7 @@
             <button onclick="addLinks()" type="button"
                 class="px-5 py-2.5 !mt-8 w-full bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg tracking-wide">Add</button>
         </div>
-    </div>
+    </x-model>
 
     <x-form action="{{ route('mailsetup.store') }}" method="POST"
         :fields="[
@@ -251,9 +250,6 @@
              <!-- If Other Input Fild Add -->
         </div> --}}
     </x-form>
-<script>
-    let otherLinksData = [];
-    let linkIndex = 0;
-</script>
+
 @vite(['resources/js/modal.js']);
 </x-app-layout>
