@@ -19,6 +19,7 @@
             ],
             'attributes' => [
                 'class' => $inputAttributeClass,
+                'autocomplete' => 'off',
             ],
             'additionalContent' => '<i class=\'fa-regular fa-envelope w-[18px] h-[18px] absolute right-4\'></i>',
         ],
@@ -46,6 +47,7 @@
             ],
             'attributes' => [
                 'class' => $inputAttributeClass,
+                'autocomplete' => 'off',
             ],
         ],
         // [
@@ -69,6 +71,7 @@
             'errorClass' => $errorClass,
             'wrapper' => [
                 'class' => $wrapper,
+                'auto'
             ],
             'attributes' => [
                 'class' => $inputAttributeClass,
