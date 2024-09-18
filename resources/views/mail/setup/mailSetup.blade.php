@@ -49,199 +49,198 @@
         </div>
     </x-model>
 
-    <x-form action="{{ route('mailsetup.store') }}" method="POST"
-        :fields="[
-            [
-                'type' => 'text',
-                'name' => 'mail_transport',
-                'id' => 'mail_transport',
-                'placeholder' => 'Enter your mail_transport',
-                'value' => 'smtp',
-                'errorClass' => $errorClass,
-                'wrapper' => [
-                    'class' => $wrapper,
-                ],
-                'attributes' => [
-                    'class' => $inputAttributeClass,
-                ],
-                'additionalContent' => '<i class=\'fa-regular fa-envelope w-[18px] h-[18px] absolute right-4\'></i>',
+    <x-form action="{{ route('mailsetup.store') }}" method="POST" :fields="[
+        [
+            'type' => 'text',
+            'name' => 'mail_transport',
+            'id' => 'mail_transport',
+            'placeholder' => 'Enter your mail_transport',
+            'value' => 'smtp',
+            'errorClass' => $errorClass,
+            'wrapper' => [
+                'class' => $wrapper,
             ],
-            [
-                'type' => 'text',
-                'name' => 'mail_host',
-                'id' => 'mail_host',
-                'placeholder' => 'Enter your mail_host',
-                'value' => 'smtp.gmail.com',
-                'additionalContent' => '<i class=\'fa-regular fa-envelope w-[18px] h-[18px] absolute right-4\'></i>',
-                'errorClass' => $errorClass,
-                'wrapper' => [
-                    'class' => $wrapper,
-                ],
-                'attributes' => [
-                    'class' => $inputAttributeClass,
-                ],
-                // 'label' => [
-                //     'name' => 'Enter your mail_host',
-                //     'attributes' => [
-                //         'class' => '',
-                //     ],
-                // ],
+            'attributes' => [
+                'class' => $inputAttributeClass,
             ],
-            [
-                'type' => 'text',
-                'name' => 'mail_port',
-                'id' => 'mail_port',
-                'placeholder' => 'Enter your mail_port',
-                'value' => '587',
-                'errorClass' => $errorClass,
-                'wrapper' => [
-                    'class' => $wrapper,
-                ],
-                'attributes' => [
-                    'class' => $inputAttributeClass,
-                ],
-                'additionalContent' => '<i class=\'fa-regular fa-envelope w-[18px] h-[18px] absolute right-4\'></i>',
+            'additionalContent' => '<i class=\'fa-regular fa-envelope w-[18px] h-[18px] absolute right-4\'></i>',
+        ],
+        [
+            'type' => 'text',
+            'name' => 'mail_host',
+            'id' => 'mail_host',
+            'placeholder' => 'Enter your mail_host',
+            'value' => 'smtp.gmail.com',
+            'additionalContent' => '<i class=\'fa-regular fa-envelope w-[18px] h-[18px] absolute right-4\'></i>',
+            'errorClass' => $errorClass,
+            'wrapper' => [
+                'class' => $wrapper,
             ],
-            [
-                'type' => 'text',
-                'name' => 'mail_username',
-                'id' => 'mail_username',
-                'placeholder' => 'Enter your mail_username',
-                'errorClass' => 'mt-[4rem] text-sm absolute left-0 w-full',
-                'wrapper' => [
-                    'class' => $wrapper,
-                ],
-                'attributes' => [
-                    'class' => $inputAttributeClass,
-                ],
-                'additionalContent' => '<i class=\'fa-regular fa-envelope w-[18px] h-[18px] absolute right-4\'></i>',
+            'attributes' => [
+                'class' => $inputAttributeClass,
             ],
-            [
-                'type' => 'text',
-                'name' => 'mail_password',
-                'id' => 'mail_password',
-                'placeholder' => 'Enter your mail_password',
-                'errorClass' => $errorClass,
-                'wrapper' => [
-                    'class' => $wrapper,
-                ],
-                'attributes' => [
-                    'class' => $inputAttributeClass,
-                ],
-                'additionalContent' => '<i class=\'fa-regular fa-envelope w-[18px] h-[18px] absolute right-4\'></i>',
+            // 'label' => [
+            //     'name' => 'Enter your mail_host',
+            //     'attributes' => [
+            //         'class' => '',
+            //     ],
+            // ],
+        ],
+        [
+            'type' => 'text',
+            'name' => 'mail_port',
+            'id' => 'mail_port',
+            'placeholder' => 'Enter your mail_port',
+            'value' => '587',
+            'errorClass' => $errorClass,
+            'wrapper' => [
+                'class' => $wrapper,
             ],
-            [
-                'type' => 'text',
-                'name' => 'mail_encryption',
-                'id' => 'mail_encryption',
-                'placeholder' => 'Enter your mail_encryption',
-                'value' => 'tls',
-                'errorClass' => $errorClass,
-                'wrapper' => [
-                    'class' => $wrapper,
-                ],
-                'attributes' => [
-                    'class' => $inputAttributeClass,
-                ],
-                'additionalContent' => '<i class=\'fa-regular fa-envelope w-[18px] h-[18px] absolute right-4\'></i>',
+            'attributes' => [
+                'class' => $inputAttributeClass,
             ],
-            [
-                'type' => 'text',
-                'name' => 'mail_from',
-                'id' => 'mail_from',
-                'placeholder' => 'Enter your mail_from',
-                'errorClass' => $errorClass,
-                'wrapper' => [
-                    'class' => $wrapper,
-                ],
-                'attributes' => [
-                    'class' => $inputAttributeClass,
-                ],
-                'additionalContent' => '<i class=\'fa-regular fa-envelope w-[18px] h-[18px] absolute right-4\'></i>',
+            'additionalContent' => '<i class=\'fa-regular fa-envelope w-[18px] h-[18px] absolute right-4\'></i>',
+        ],
+        [
+            'type' => 'text',
+            'name' => 'mail_username',
+            'id' => 'mail_username',
+            'placeholder' => 'Enter your mail_username',
+            'errorClass' => 'mt-[4rem] text-sm absolute left-0 w-full',
+            'wrapper' => [
+                'class' => $wrapper,
             ],
-            [
-                'type' => 'text',
-                'name' => 'mail_sender_name',
-                'id' => 'mail_sender_name',
-                'placeholder' => 'Enter your mail_sender_name',
-                'errorClass' => $errorClass,
-                'wrapper' => [
-                    'class' => $wrapper,
-                ],
-                'attributes' => [
-                    'class' => $inputAttributeClass,
-                ],
-                'additionalContent' => '<i class=\'fa-regular fa-envelope w-[18px] h-[18px] absolute right-4\'></i>',
+            'attributes' => [
+                'class' => $inputAttributeClass,
             ],
-            [
-                'type' => 'text',
-                'name' => 'sender_department',
-                'id' => 'sender_department',
-                'placeholder' => 'Enter your sender_department',
-                'errorClass' => $errorClass,
-                'wrapper' => [
-                    'class' => $wrapper,
-                ],
-                'attributes' => [
-                    'class' => $inputAttributeClass,
-                ],
-                'additionalContent' => '<i class=\'fa-regular fa-envelope w-[18px] h-[18px] absolute right-4\'></i>',
+            'additionalContent' => '<i class=\'fa-regular fa-envelope w-[18px] h-[18px] absolute right-4\'></i>',
+        ],
+        [
+            'type' => 'text',
+            'name' => 'mail_password',
+            'id' => 'mail_password',
+            'placeholder' => 'Enter your mail_password',
+            'errorClass' => $errorClass,
+            'wrapper' => [
+                'class' => $wrapper,
             ],
-            [
-                'type' => 'text',
-                'name' => 'sender_company_logo',
-                'id' => 'sender_company_logo',
-                'placeholder' => 'Enter your sender_company_logo',
-                'errorClass' => $errorClass,
-                'wrapper' => [
-                    'class' => $wrapper,
-                ],
-                'attributes' => [
-                    'class' => $inputAttributeClass,
-                ],
-                'additionalContent' => '<i class=\'fa-regular fa-envelope w-[18px] h-[18px] absolute right-4\'></i>',
+            'attributes' => [
+                'class' => $inputAttributeClass,
             ],
-            [
-                'type' => 'text',
-                'name' => 'sender_website',
-                'id' => 'sender_website',
-                'placeholder' => 'Enter your website',
-                'errorClass' => $errorClass,
-                'wrapper' => [
-                    'class' => $wrapper,
-                ],
-                'attributes' => [
-                    'class' => $inputAttributeClass,
-                ],
-                'additionalContent' => '<i class=\'fa-regular fa-envelope w-[18px] h-[18px] absolute right-4\'></i>',
+            'additionalContent' => '<i class=\'fa-regular fa-envelope w-[18px] h-[18px] absolute right-4\'></i>',
+        ],
+        [
+            'type' => 'text',
+            'name' => 'mail_encryption',
+            'id' => 'mail_encryption',
+            'placeholder' => 'Enter your mail_encryption',
+            'value' => 'tls',
+            'errorClass' => $errorClass,
+            'wrapper' => [
+                'class' => $wrapper,
             ],
-            [
-                'type' => 'number',
-                'name' => 'sender_number',
-                'id' => 'sender_number',
-                'placeholder' => 'Enter your sender_number',
-                'errorClass' => $errorClass,
-                'wrapper' => [
-                    'class' => $wrapper,
-                ],
-                'attributes' => [
-                    'class' => $inputAttributeClass,
-                ],
-                'additionalContent' => '<i class=\'fa-regular fa-envelope w-[18px] h-[18px] absolute right-4\'></i>',
+            'attributes' => [
+                'class' => $inputAttributeClass,
             ],
-            [
-                'type' => 'hidden',
-                'name' => 'other_links',
-                'id' => 'otherLinksArray',
+            'additionalContent' => '<i class=\'fa-regular fa-envelope w-[18px] h-[18px] absolute right-4\'></i>',
+        ],
+        [
+            'type' => 'text',
+            'name' => 'mail_from',
+            'id' => 'mail_from',
+            'placeholder' => 'Enter your mail_from',
+            'errorClass' => $errorClass,
+            'wrapper' => [
+                'class' => $wrapper,
             ],
-        ]"
+            'attributes' => [
+                'class' => $inputAttributeClass,
+            ],
+            'additionalContent' => '<i class=\'fa-regular fa-envelope w-[18px] h-[18px] absolute right-4\'></i>',
+        ],
+        [
+            'type' => 'text',
+            'name' => 'mail_sender_name',
+            'id' => 'mail_sender_name',
+            'placeholder' => 'Enter your mail_sender_name',
+            'errorClass' => $errorClass,
+            'wrapper' => [
+                'class' => $wrapper,
+            ],
+            'attributes' => [
+                'class' => $inputAttributeClass,
+            ],
+            'additionalContent' => '<i class=\'fa-regular fa-envelope w-[18px] h-[18px] absolute right-4\'></i>',
+        ],
+        [
+            'type' => 'text',
+            'name' => 'sender_department',
+            'id' => 'sender_department',
+            'placeholder' => 'Enter your sender_department',
+            'errorClass' => $errorClass,
+            'wrapper' => [
+                'class' => $wrapper,
+            ],
+            'attributes' => [
+                'class' => $inputAttributeClass,
+            ],
+            'additionalContent' => '<i class=\'fa-regular fa-envelope w-[18px] h-[18px] absolute right-4\'></i>',
+        ],
+        [
+            'type' => 'text',
+            'name' => 'sender_company_logo',
+            'id' => 'sender_company_logo',
+            'placeholder' => 'Enter your sender_company_logo',
+            'errorClass' => $errorClass,
+            'wrapper' => [
+                'class' => $wrapper,
+            ],
+            'attributes' => [
+                'class' => $inputAttributeClass,
+            ],
+            'additionalContent' => '<i class=\'fa-regular fa-envelope w-[18px] h-[18px] absolute right-4\'></i>',
+        ],
+        [
+            'type' => 'text',
+            'name' => 'sender_website',
+            'id' => 'sender_website',
+            'placeholder' => 'Enter your website',
+            'errorClass' => $errorClass,
+            'wrapper' => [
+                'class' => $wrapper,
+            ],
+            'attributes' => [
+                'class' => $inputAttributeClass,
+            ],
+            'additionalContent' => '<i class=\'fa-regular fa-envelope w-[18px] h-[18px] absolute right-4\'></i>',
+        ],
+        [
+            'type' => 'number',
+            'name' => 'sender_number',
+            'id' => 'sender_number',
+            'placeholder' => 'Enter your sender_number',
+            'errorClass' => $errorClass,
+            'wrapper' => [
+                'class' => $wrapper,
+            ],
+            'attributes' => [
+                'class' => $inputAttributeClass,
+            ],
+            'additionalContent' => '<i class=\'fa-regular fa-envelope w-[18px] h-[18px] absolute right-4\'></i>',
+        ],
+        [
+            'type' => 'hidden',
+            'name' => 'other_links',
+            'id' => 'otherLinksArray',
+        ],
+    ]"
         :submit="[
             'text' => 'Submit',
             'attributes' => [
                 'class' => 'bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700'
             ]
         ]"
-        class="space-y-6 font-[sans-serif] text-[#333] max-w-full mx-auto submitForm grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-6" >
+        class="space-y-6 font-[sans-serif] text-[#333] max-w-full mx-auto submitForm grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
 
         <div class="otherLinks flex gap-4">
             <!-- All ICon Show -->
@@ -251,5 +250,9 @@
         </div> --}}
     </x-form>
 
-@vite(['resources/js/modal.js']);
 </x-app-layout>
+<script>
+    let otherLinksData = [];
+    let linkIndex = 0;
+</script>
+@vite(['resources/js/modal.js']);

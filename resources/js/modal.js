@@ -1,5 +1,4 @@
-// let otherLinksData = [];
-// let linkIndex = 0;
+
 const modal = document.querySelector('.modal');
 
 window.hideModal = function () {

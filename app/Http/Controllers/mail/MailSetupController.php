@@ -68,7 +68,7 @@ class MailSetupController extends Controller
             'mail_sender_name' => 'required|string',
         ]);
         $otherLink = [];
-        if ($request->has('other_links')) {
+        if ($request->other_links != null) {
             $request->validate([
                 'other_links' => 'required|json',
             ]);
