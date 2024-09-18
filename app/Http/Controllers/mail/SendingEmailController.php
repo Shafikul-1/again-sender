@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Jobs\SendingEmailJob;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Models\UserFiles;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Gate;
@@ -46,8 +47,10 @@ class SendingEmailController extends Controller
     public function create()
     {
         $userSetupEmails = MailSetup::where('user_id', Auth::user()->id)->pluck('mail_from');
-        $previseFiles = MailContent::where('user_id', Auth::user()->id)->pluck('mail_files');
-        $allFiles = $previseFiles->flatten();
+        $allFiles = UserFiles::where('user_id', Auth::user()->id)->pluck('file_name');
+        // $previseFiles = MailContent::where('user_id', Auth::user()->id)->pluck('mail_files');
+        // $allFiles = $previseFiles->flatten();
+        // return $userSetupEmails;
         return view('mail.sendingEmails.add', compact('userSetupEmails', 'allFiles'));
     }
 
@@ -81,6 +84,18 @@ class SendingEmailController extends Controller
                 $rename = time() . '_' . uniqid() . '.' . $ext;
                 $files->move(public_path() . '/mailFile', $rename);
                 $mailFileNames[] = $rename;
+            }
+
+            $allFile = array_map(function ($data) {
+                return [
+                    'file_name' => $data,
+                    'user_id' => Auth::user()->id,
+                ];
+            }, $mailFileNames);
+
+            $arrayChunk = array_chunk($allFile, 20);
+            foreach ($arrayChunk as $key => $value) {
+                UserFiles::insert($value);
             }
         }
 
@@ -117,24 +132,6 @@ class SendingEmailController extends Controller
 
         $mailsetup_id = $mailsetupDetails->id;
         $mail_form = $request->mail_form;
-        // $schedule_time = explode('|', $request->schedule_time);
-        //  // $randomMinute = $schedule_time[array_rand($schedule_time)];
-
-        // $sendingMail = array_map(function ($data) use ($mailContent, $send_time, $userId, $schedule_time, $mail_form, $mailsetup_id) {
-        //     $randomMinute = $schedule_time[array_rand($schedule_time)];
-        //     $newTime = Carbon::parse($send_time)->addMinutes((int)$randomMinute);
-        //     return [
-        //         'mails' => $data,
-        //         'send_time' => $newTime,
-        //         'wait_minute' => (int)$randomMinute,
-        //         'mail_form' => $mail_form,
-        //         'mailsetup_id' => $mailsetup_id,
-        //         'mail_content_id' => $mailContent->id,
-        //         'created_at' => now(),
-        //         'updated_at' => now(),
-        //         'user_id' => $userId,
-        //     ];
-        // }, $filterEmails);
 
         $schedule_time = explode('|', $request->schedule_time);
         $currentTime = Carbon::parse($request->send_time);
@@ -198,8 +195,9 @@ class SendingEmailController extends Controller
             abort(403, 'Not Permiton This Content');
         }
         $userSetupEmails = MailSetup::where('user_id', Auth::user()->id)->get(['id', 'mail_from']);
-        // return $userSetupEmails;
-        return view('mail.sendingEmails.edit', compact(['sendingEmailEdit', 'userSetupEmails']));
+        $allFiles = UserFiles::where('user_id', Auth::user()->id)->pluck('file_name');
+        // return $sendingEmailEdit;
+        return view('mail.sendingEmails.edit', compact(['sendingEmailEdit', 'userSetupEmails', 'allFiles']));
     }
 
     /**
@@ -223,21 +221,12 @@ class SendingEmailController extends Controller
             'schedule_time' => ['required', 'regex:/^(\d+(\|\d+)*)?$/'],
         ]);
 
-        $oldFiles = $sendingEmailData->mail_content[0]->mail_files;
         $fileData = [];
         if ($request->has('mail_files')) {
             $request->validate([
                 'mail_files' => 'required|array',
-                'mail_files.*' => 'file|mimes:jpg,jpeg,png,pdf,doc,docx|max:10100',
+                'mail_files.*' => 'file|mimes:jpg,jpeg,png,pdf,doc,docx,webp,gif|max:10100',
             ]);
-            if (!empty($oldFiles)) {
-                foreach ($oldFiles as $fileName) {
-                    if (!File::exists(public_path() . '/mailFile/' . $fileName)) {
-                        continue;
-                    }
-                    File::delete(public_path() . '/mailFile/' . $fileName);
-                }
-            }
 
             foreach ($request->mail_files as $files) {
                 $ext = $files->getClientOriginalExtension();
@@ -245,8 +234,29 @@ class SendingEmailController extends Controller
                 $files->move(public_path() . '/mailFile', $rename);
                 $fileData[] = $rename;
             }
-        } else {
-            $fileData = $oldFiles;
+
+            $allFile = array_map(function ($data) {
+                return [
+                    'file_name' => $data,
+                    'user_id' => Auth::user()->id,
+                ];
+            }, $fileData);
+
+            $arrayChunk = array_chunk($allFile, 20);
+            foreach ($arrayChunk as $key => $value) {
+                UserFiles::insert($value);
+            }
+        }
+
+        if ($request->mail_previse_file != null) {
+            $request->validate([
+                'mail_previse_file' => 'required|string',
+            ]);
+            $getFileName = explode(',', $request->mail_previse_file);
+            // $mailFilNames = array_merge($mailFileNames, $getFileName);
+            foreach ($getFileName as $fileName) {
+                $fileData[] = $fileName;
+            }
         }
 
         MailContent::where('id', $sendingEmailData->mail_content_id)->update([
@@ -366,44 +376,50 @@ class SendingEmailController extends Controller
      */
     private function deleteFile($content, $data)
     {
-        $data->delete();
-        return true;
-        // try {
-        //     if (count($content) > 1) {
-        //         $data->delete();
-        //     } else {
-        //         $contentDelete = MailContent::findOrFail($data->mail_content_id);
-        //         if (!empty($contentDelete->mail_files)) {
-        //             foreach ($contentDelete->mail_files as $file) {
-        //                 if (!File::exists(public_path() . '/mailFile/' . $file)) {
-        //                     continue;
-        //                 }
-        //                 File::delete(public_path() . '/mailFile/' . $file);
-        //             }
-        //         }
-        //         $contentDelete->delete();
-        //     }
-        //     return true;
-        // } catch (Throwable $th) {
-        //     return false;
-        // }
+        try {
+            if (count($content) > 1) {
+                $data->delete();
+            } else {
+                $contentDelete = MailContent::findOrFail($data->mail_content_id);
+                $contentDelete->delete();
+            }
+            return true;
+        } catch (Throwable $th) {
+            return false;
+        }
     }
 
+    /**
+     *  only file delete
+     */
     public function uploadFileDelete($name)
     {
-        $mailContent  = MailContent::where('user_id', Auth::user()->id)->whereJsonContains('mail_files', $name)->first();
-        if ($mailContent) {
-            $updateFiles = array_diff($mailContent->mail_files, [$name]);
-            $mailContent->mail_files = array_values($updateFiles);
-            $mailContent->save();
-
+        try {
+            $deleteFileName = UserFiles::where('file_name', $name)->first();
             $filePath =  public_path() . '/mailFile/' . $name;
             if (File::exists($filePath)) {
                 File::delete($filePath);
             }
+            $deleteFileName->delete();
             return redirect()->back()->with('success', 'file Delete Successful');
-        } else {
-            return redirect()->back()->with('error', 'No File Found');
+        } catch (\Throwable $th) {
+            Log::error('fileDeleteFailed => ' . $th->getMessage());
+            return redirect()->back()->with('error', 'Someting went wrong');
         }
+
+        // $mailContent  = MailContent::where('user_id', Auth::user()->id)->whereJsonContains('mail_files', $name)->first();
+        // if ($mailContent) {
+        //     $updateFiles = array_diff($mailContent->mail_files, [$name]);
+        //     $mailContent->mail_files = array_values($updateFiles);
+        //     $mailContent->save();
+
+        //     $filePath =  public_path() . '/mailFile/' . $name;
+        //     if (File::exists($filePath)) {
+        //         File::delete($filePath);
+        //     }
+        //     return redirect()->back()->with('success', 'file Delete Successful');
+        // } else {
+        //     return redirect()->back()->with('error', 'No File Found');
+        // }
     }
 }
