@@ -48,10 +48,22 @@ class SendingEmailController extends Controller
     {
         $userSetupEmails = MailSetup::where('user_id', Auth::user()->id)->pluck('mail_from');
         $allFiles = UserFiles::where('user_id', Auth::user()->id)->pluck('file_name');
+        // return $userSetupEmails;
+        $emailAndStatus = $userSetupEmails->map(function ($email) {
+            $status = SendingEmail::where('mail_form', $email)
+                ->where('user_id', Auth::id())
+                ->where('status', 'noaction')
+                ->exists(); // Use exists() for better performance
+
+            return [
+                'email' => $email,
+                'status' => $status
+            ];
+        });
+// return $emailAndStatus;
+        return view('mail.sendingEmails.add', compact('emailAndStatus', 'allFiles'));
         // $previseFiles = MailContent::where('user_id', Auth::user()->id)->pluck('mail_files');
         // $allFiles = $previseFiles->flatten();
-        // return $userSetupEmails;
-        return view('mail.sendingEmails.add', compact('userSetupEmails', 'allFiles'));
     }
 
     /**

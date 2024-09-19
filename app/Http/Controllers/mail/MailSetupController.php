@@ -61,10 +61,10 @@ class MailSetupController extends Controller
             'mail_transport' => 'required|string',
             'mail_host' => 'required|string',
             'mail_port' => 'required|numeric',
-            'mail_username' => 'required|string',
+            'mail_username' => 'required|email',
             'mail_password' => 'required|string',
             'mail_encryption' => 'required|string',
-            'mail_from' => 'required|string',
+            'mail_from' => 'required|email',
             'mail_sender_name' => 'required|string',
         ]);
         $otherLink = [];

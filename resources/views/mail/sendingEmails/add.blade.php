@@ -50,19 +50,6 @@
                 'autocomplete' => 'off',
             ],
         ],
-        // [
-        //     'type' => 'text',
-        //     'name' => 'mail_body',
-        //     'id' => 'mail_body',
-        //     'placeholder' => 'Enter your mail_body',
-        //     'errorClass' => $errorClass,
-        //     'wrapper' => [
-        //         'class' => $wrapper,
-        //     ],
-        //     'attributes' => [
-        //         'class' => $inputAttributeClass,
-        //     ],
-        // ],
         [
             'type' => 'text',
             'name' => 'schedule_time',
@@ -78,20 +65,6 @@
                 'autocomplete' => 'off',
             ],
         ],
-        // [
-        //     'type' => 'file',
-        //     'name' => 'mail_files[]',
-        //     'id' => 'mail_files',
-        //     'placeholder' => 'Enter your mail_files',
-        //     'errorClass' => $errorClass,
-        //     'wrapper' => [
-        //         'class' => $wrapper,
-        //     ],
-        //     'attributes' => [
-        //         'class' => $inputAttributeClass,
-        //         'multiple' => 'multiple',
-        //     ],
-        // ],
     ]"
         class="space-y-6 font-[sans-serif] text-[#333] max-w-full mx-auto submitForm grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-6" enctype="multipart/form-data">
 
@@ -143,8 +116,8 @@
             <select name="mail_form" id="mail_form"
                 class="px-4 py-3 bg-[#f0f1f2] focus:bg-transparent w-full text-sm border outline-[#007bff] rounded transition-all dark:focus:text-white">
                 <option disabled selected value="">No Select Sending mail_form</option>
-                @foreach ($userSetupEmails as $emails)
-                    <option value="{{ $emails }}" class="text-black">{{ $emails }}</option>
+                @foreach ($emailAndStatus as $data)
+                    <option value="{{ $data['email'] }}" class="text-black {{ $data['status'] === true ? 'bg-blue-100 shadow-md' :'' }}">{{ $data['email'] }}</option>
                 @endforeach
             </select>
             @error('mail_form')
