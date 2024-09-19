@@ -108,35 +108,42 @@
                         </td>
 
                         @php
-                            $total = [
-                                $mails->fail_count,
-                                $mails->success_count,
-                                $mails->pending_count,
-                                $mails->noaction_count,
-                                $mails->netdisable_count
-                            ];
+                        // Get the counts
+                        $failCount = $mails->fail_count;
+                        $successCount = $mails->success_count;
+                        $pendingCount = $mails->pending_count;
+                        $noActionCount = $mails->noaction_count;
+                        $netDisableCount = $mails->netdisable_count;
 
-                            $totalSum = array_sum($total);
-                            $average = ($totalSum > 0) ? ($totalSum / count($total)) : 0;
-                            $averagePercentage = ($totalSum > 0) ? (($average / $totalSum) * 100) : 0;
+                        // Calculate the total
+                        $totalSum = $failCount + $successCount + $pendingCount + $noActionCount + $netDisableCount;
 
+                        // Calculate the percentage for each category
+                        $failPercentage = ($totalSum > 0) ? (($failCount / $totalSum) * 100) : 0;
+                        $successPercentage = ($totalSum > 0) ? (($successCount / $totalSum) * 100) : 0;
+                        $pendingPercentage = ($totalSum > 0) ? (($pendingCount / $totalSum) * 100) : 0;
+                        $noActionPercentage = ($totalSum > 0) ? (($noActionCount / $totalSum) * 100) : 0;
+                        $netDisablePercentage = ($totalSum > 0) ? (($netDisableCount / $totalSum) * 100) : 0;
+                    @endphp
 
-                                // Calculate the percentage for each category if the total sum is greater than 0
-                                // $failPercentage = ($totalSum > 0) ? (($total['fail'] / $totalSum) * 100) : 0;
-                                // $successPercentage = ($totalSum > 0) ? (($total['success'] / $totalSum) * 100) : 0;
-                                // $pendingPercentage = ($totalSum > 0) ? (($total['pending'] / $totalSum) * 100) : 0;
-                                // $noactionPercentage = ($totalSum > 0) ? (($total['noaction'] / $totalSum) * 100) : 0;
-                                // $netdisablePercentage = ($totalSum > 0) ? (($total['netdisable'] / $totalSum) * 100) : 0;
+                    <td class="text-center p-4 text-xs">
+                        <p class="text-xs text-gray-400 ml-2">{{ $totalSum }}</p>
+                    </td>
+                    <td class="text-center p-4 flex items-center">
+                        <div class="bg-gray-600 rounded-full w-full h-4 min-w-[50px] relative">
+                            <!-- Fail -->
+                            <div class="absolute left-0 h-full rounded-full bg-red-600" style="width: {{ $failPercentage }}%;"></div>
+                            <!-- Success -->
+                            <div class="absolute left-0 h-full rounded-full bg-green-600" style="width: {{ $successPercentage }}%; margin-left: {{ $failPercentage }}%;"></div>
+                            <!-- Pending -->
+                            <div class="absolute left-0 h-full rounded-full bg-yellow-600" style="width: {{ $pendingPercentage }}%; margin-left: {{ $failPercentage + $successPercentage }}%;"></div>
+                            <!-- No Action -->
+                            <div class="absolute left-0 h-full rounded-full bg-blue-100" style="width: {{ $noActionPercentage }}%; margin-left: {{ $failPercentage + $successPercentage + $pendingPercentage }}%;"></div>
+                            <!-- Net Disable -->
+                            <div class="absolute left-0 h-full rounded-full bg-red-400" style="width: {{ $netDisablePercentage }}%; margin-left: {{ $failPercentage + $successPercentage + $pendingPercentage + $noActionPercentage }}%;"></div>
+                        </div>
+                    </td>
 
-                        @endphp
-                        <td class="text-center p-4 text-xs">
-                            <p class="text-xs text-gray-400 ml-2">{{ $totalSum }}</p>
-                        </td>
-                        <td class="text-center p-4 flex items-center">
-                            <div class="bg-gray-600 rounded-full w-full h-4 min-w-[50px]">
-                                <div class=" h-full rounded-full bg-purple-700" style="width: {{ $averagePercentage }}%;"></div>
-                            </div>
-                        </td>
                         {{-- <p class="text-xs text-gray-400 ml-2">{{ number_format($averagePercentage, 2) }}%</p> --}}
 
                         {{-- Action --}}
