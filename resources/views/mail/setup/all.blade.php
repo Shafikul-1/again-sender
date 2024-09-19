@@ -133,11 +133,11 @@
                             <p class="text-xs text-gray-400 ml-2">{{ $totalSum }}</p>
                         </td>
                         <td class="text-center p-4 flex items-center">
-                            <div class="bg-gray-600 rounded-full w-full h-2 min-w-[50px]">
-                                <div class="w-4/5 h-full rounded-full bg-purple-700" style="width: {{ $averagePercentage }}%;"></div>
+                            <div class="bg-gray-600 rounded-full w-full h-4 min-w-[50px]">
+                                <div class=" h-full rounded-full bg-purple-700" style="width: {{ $averagePercentage }}%;"></div>
                             </div>
-                            <p class="text-xs text-gray-400 ml-2">{{ number_format($averagePercentage, 2) }}%</p>
                         </td>
+                        {{-- <p class="text-xs text-gray-400 ml-2">{{ number_format($averagePercentage, 2) }}%</p> --}}
 
                         {{-- Action --}}
                         <td class="">

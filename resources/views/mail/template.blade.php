@@ -17,15 +17,15 @@
 
         <table width="600" cellpadding="0" cellspacing="0" border="0" style="border: 10px solid #f16425; border-radius: 20px; width: 600px; background-color: white;">
             <tr>
-                <td width="200" style="background-color: #f16425; text-align: center; padding: 20px;">
+                <td width="200" style="background-color: #f16425; text-align: center; padding: 5px;">
                     <img src="{{ $senderDefultData['sender_company_logo'] ?? 'https://archive.org/download/placeholder-image/placeholder-image.jpg' }}" width="150" style="border-radius: 20px;" alt="company logo">
                 </td>
                 <td width="400" style="padding: 20px;">
                     <table cellpadding="0" cellspacing="0" border="0">
                         <tr>
-                            <td style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; font-size: 18px; font-weight: bold; color: black;">
-                                {{ $senderDefultData['mail_sender_name'] }}
-                            </td>||
+                            <td style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; font-size: 18px; font-weight: bold; color: black; white-space: nowrap;">
+                                {{ $senderDefultData['mail_sender_name'] }} 
+                            </td>
                             @if ($senderDefultData['sender_department'])
                             <td style="padding-left: 10px; font-family: cursive; font-size: 15px;">
                                 {{ $senderDefultData['sender_department'] }}

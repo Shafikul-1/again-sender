@@ -16,7 +16,7 @@ class MailSetupController extends Controller
      */
     public function index(Request $request)
     {
-        // $allEmail = MailSetup::where('user_id', Auth::user()->id)->paginate(10);
+        // $allEmail = MailSetup::where('user_id', Auth::user()->id)->paginate(5);
         $query = MailSetup::query();
 
         $query->select(['id', 'mail_from'])->withCount([
@@ -39,7 +39,7 @@ class MailSetupController extends Controller
         if ($search = request()->input('search')) {
             $query->where('mail_from', 'LIKE', '%' . $search . '%');
         }
-        $allEmail = $query->where('user_id', Auth::user()->id)->paginate(10)->appends(['search', $search]);
+        $allEmail = $query->where('user_id', Auth::user()->id)->paginate(25)->appends(['search', $search]);
         // return $allEmail;
         return view('mail.setup.all', compact('allEmail'));
     }
