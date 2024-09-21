@@ -91,16 +91,16 @@
                 <div class="my-8 text-center">
                     <h4 class="text-3xl text-gray-800 font-extrabold capitalize">upload and select file</h4>
                 </div>
-                <input type="text" id="mail_previse_file" name="mail_previse_file" class="mail_previse_file" value="{{ implode(',', $sendingEmailEdit->mail_content[0]->mail_files)  }}">
+                <input type="hidden" id="mail_previse_file" name="mail_previse_file" class="mail_previse_file" value="{{ implode(',', $sendingEmailEdit->mail_content[0]->mail_files)  }}">
                 <div class="relative grid grid-cols-3 gap-2">
                     @if (count($allFiles) <= 0)
                        <h3 clas="text-3xl font-bold text-center">No Added Files</h3>
                     @else
                     @foreach ($allFiles as $file)
                         <div class="selectImage cursor-pointer relative">
-                           <a href="{{ route('sendingemails.uploadFileDelete', $file) }}">
+                           {{-- <a href="{{ route('sendingemails.uploadFileDelete', $file) }}">
                             <i class="fa-solid fa-trash text-3xl top-4 right-4 absolute text-red-500 cursor-pointer"></i>
-                           </a>
+                           </a> --}}
                            <img class="h-auto max-w-full rounded-lg" onclick="selectImage(event)" name="{{ $file }}" src="{{ asset('mailFile/' . $file) }}" alt="">
                             {{-- <img class="h-auto max-w-full rounded-lg" onclick="selectImage(event)" name="{{ $files }}" src="{{ asset('mailFile/' . $files) }}" alt=""> --}}
                         </div>

@@ -15,6 +15,7 @@ use App\Models\UserFiles;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\DB;
 
 class SendingEmailController extends Controller
 {
@@ -60,7 +61,7 @@ class SendingEmailController extends Controller
                 'status' => $status
             ];
         });
-// return $emailAndStatus;
+        // return $emailAndStatus;
         return view('mail.sendingEmails.add', compact('emailAndStatus', 'allFiles'));
         // $previseFiles = MailContent::where('user_id', Auth::user()->id)->pluck('mail_files');
         // $allFiles = $previseFiles->flatten();
@@ -343,6 +344,26 @@ class SendingEmailController extends Controller
      */
     public function checkTime()
     {
+        $currentTime = Carbon::now();
+
+        $overSendTime = SendingEmail::where('send_time', '<=', $currentTime)->get();
+
+        DB::beginTransaction();
+        try {
+            foreach ($overSendTime as $email) {
+                $newSendTime = $currentTime->copy()->addMinutes($email->wait_minute);
+
+                $email->update(['send_time' => $newSendTime]);
+            }
+            DB::commit();
+        } catch (Throwable $th) {
+            DB::rollBack();
+            Log::error('Check Time Error => ' . $th->getMessage());
+            return "Error occurred while updating send times.";
+        }
+
+        return "Time Update Successful";
+        /*
         $currentTime = now();
         $overSendTime  = SendingEmail::where('send_time', '<=', $currentTime)->get();
         foreach ($overSendTime as $key => $value) {
@@ -353,6 +374,7 @@ class SendingEmailController extends Controller
             }
         }
         return "Time Update Successful";
+*/
     }
 
     /**
