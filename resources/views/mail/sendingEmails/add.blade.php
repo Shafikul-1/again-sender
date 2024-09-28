@@ -98,7 +98,7 @@
                     @foreach ($allFiles as $files)
                         <div class="selectImage cursor-pointer relative">
                            <a href="{{ route('sendingemails.uploadFileDelete', $files) }}">
-                            <i class="fa-solid fa-trash text-3xl top-4 right-4 absolute text-red-500 cursor-pointer"></i>
+                           <!-- <i class="fa-solid fa-trash text-3xl top-4 right-4 absolute text-red-500 cursor-pointer"></i> -->
                            </a>
                             <img class="h-auto max-w-full rounded-lg" onclick="selectImage(event)" name="{{ $files }}" src="{{ asset('mailFile/' . $files) }}" alt="">
                         </div>

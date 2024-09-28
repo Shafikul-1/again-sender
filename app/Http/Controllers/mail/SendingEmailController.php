@@ -324,20 +324,20 @@ class SendingEmailController extends Controller
         } catch (Throwable $th) {
             Log::error("Email Dispatch Error SendingEmailController => " . $th->getMessage());
         }
-
-
-        // SendingEmail::with('mail_content')
-        //     ->where('send_time', '<=', $currentTime)
-        //     ->where('status', 'noaction')
-        //     ->chunk(100, function ($emails) {
-        //         // Dispatch job for each chunk
-        //         SendingEmailJob::dispatch($emails);
-
-        //         // Bulk update status for each chunk
-        //         $emailIds = $emails->pluck('id');
-        //         SendingEmail::whereIn('id', $emailIds)->update(['status' => 'pending']);
-        //     });
     }
+    // SendingEmail::with('mail_content')
+    //     ->where('send_time', '<=', $currentTime)
+    //     ->where('status', 'noaction')
+    //     ->chunk(100, function ($emails) {
+    //         // Dispatch job for each chunk
+    //         SendingEmailJob::dispatch($emails);
+
+    //         // Bulk update status for each chunk
+    //         $emailIds = $emails->pluck('id');
+    //         SendingEmail::whereIn('id', $emailIds)->update(['status' => 'pending']);
+    //     });
+
+
 
     /**
      * Check Sending Time to Create Time because Net or ElectryCity problem
