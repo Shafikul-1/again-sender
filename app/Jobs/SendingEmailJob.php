@@ -36,15 +36,7 @@ class SendingEmailJob implements ShouldQueue
         foreach ($this->sendingEmails as $emails) {
             $mailConfigData = MailSetup::find($emails->mailsetup_id);
 
-            // Email configuration
             $originalMailConfig = config('mail');
-
-            // First log without configuration yet
-            Log::info('Email check - BEFORE config', [
-                'To' => $emails->mails,
-                'mailAddress' => config('mail.from.address'), // Will be empty
-                'mailMailersUsername' => config('mail.mailers.' . $mailConfigData->mail_transport . '.username'), // Will be empty
-            ]);
 
             config([
                 'mail.default' => $mailConfigData->mail_transport,
@@ -60,13 +52,6 @@ class SendingEmailJob implements ShouldQueue
                     'address' => $mailConfigData->mail_from,
                     'name' => $mailConfigData->mail_sender_name,
                 ],
-            ]);
-
-            // Second log after configuration
-            Log::info('Email check - AFTER config', [
-                'To' => $emails->mails,
-                'mailAddress' => config('mail.from.address'), // Should now be set
-                'mailMailersUsername' => config('mail.mailers.' . $mailConfigData->mail_transport . '.username'), // Should now be set
             ]);
 
             $status = false;
@@ -88,7 +73,6 @@ class SendingEmailJob implements ShouldQueue
 
             config(['mail' => $originalMailConfig]);
 
-            // Delete Sending Emails
             SendingEmail::where('id', $emails->id)->update(['status' => $status ? 'success' : 'fail']);
         }
     }

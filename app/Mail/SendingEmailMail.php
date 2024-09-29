@@ -56,9 +56,9 @@ class SendingEmailMail extends Mailable
     {
         $attachMent = [];
 
-        foreach($this->sending_email_data->mail_files as $files){
+        foreach ($this->sending_email_data->mail_files as $files) {
             $filePath = public_path('mailFile/' . $files);
-            if(file_exists($filePath)){
+            if (file_exists($filePath)) {
                 $attachMent[] = $filePath;
             }
         }

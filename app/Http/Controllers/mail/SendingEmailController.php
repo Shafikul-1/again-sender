@@ -85,6 +85,33 @@ class SendingEmailController extends Controller
             'schedule_time' => ['required', 'regex:/^(\d+(\|\d+)*)?$/'],
         ]);
 
+        $content = $request->mail_body;
+        // Regular expression to match base64-encoded images with specific formats
+        // $pattern = '/data:image\/(jpeg|png|gif|avif|jpg|webp);base64,([^\"]*)/';
+        // preg_match_all($pattern, $content, $matches, PREG_SET_ORDER);
+
+        // foreach ($matches as $match) {
+        //     $fileType = $match[1];
+        //     $fileData = base64_decode($match[2]);
+        //     $renameFile = uniqid() . time() . '.' . $fileType;
+
+        //     $directory = public_path('mailFile');
+        //     $filePath = $directory . '/' . $renameFile;
+
+        //     if (!is_dir($directory)) {
+        //         mkdir($directory, 0755, true);
+        //     }
+
+        //     file_put_contents($filePath, $fileData);
+
+        //     UserFiles::create([
+        //         'file_name' => $renameFile,
+        //         'user_id' => Auth::user()->id,
+        //     ]);
+
+        //     $content = str_replace($match[0], asset('mailFile/' . $renameFile), $content);
+        // }
+
         // Handle file uploads
         $mailFileNames = [];
         if ($request->has('mail_files')) {
@@ -123,10 +150,11 @@ class SendingEmailController extends Controller
             }
         }
 
+
         // Create mail content record
         $mailContent = MailContent::create([
             'mail_subject' => $request->mail_subject,
-            'mail_body' => $request->mail_body,
+            'mail_body' => $content,
             'mail_files' => $mailFileNames,
             'user_id' => $userId,
         ]);
