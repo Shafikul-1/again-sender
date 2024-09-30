@@ -7,15 +7,17 @@ use App\Models\CollectData;
 use App\Models\RequestLimit;
 use Illuminate\Http\Request;
 use App\Jobs\DatasCollectJob;
+use App\Exports\ExportCollectData;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CollectDataController extends Controller
 {
     public function index()
     {
-        $allData = CollectData::where('user_id', Auth::user()->id)->orderByDesc('id')->paginate(20);
+        $allData = CollectData::where('user_id', Auth::user()->id)->orderByDesc('id')->paginate(25);
         //  return $fileData;
         return view('fbData.allData', compact('allData'));
     }
@@ -25,7 +27,7 @@ class CollectDataController extends Controller
         // set_time_limit(200);
         // $getData = AllLink::where('check', 'valid')->where('status', 'noaction')->limit(10)->pluck('link')->toArray();
         AllLink::where('status', 'running')->update(['status' => 'pending',]);
-        $getData = AllLink::where('check', 'valid')->where('status', 'noaction')->limit(3)->get();
+        $getData = AllLink::where('check', 'valid')->where('status', 'noaction')->limit(10)->get();
         $collectionData = collect();
 
         if (!$getData->isEmpty()) {
@@ -35,7 +37,7 @@ class CollectDataController extends Controller
                     ['request_limit' => 0]
                 );
 
-                if ($requestLimit->request_limit < 500) {
+                if ($requestLimit->request_limit < 150) {
                     $requestLimit->increment('request_limit');
                     $collectionData->push($value);
                 }
@@ -124,6 +126,6 @@ class CollectDataController extends Controller
 
     public function exportData()
     {
-        // return Excel::download(new ExportCollectData, 'collect-data.xlsx');
+        return Excel::download(new ExportCollectData, 'collect-data.xlsx');
     }
 }

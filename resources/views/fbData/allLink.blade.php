@@ -3,9 +3,20 @@
 
     <div class="md:flex md:justify-self-stretch gap-4">
         <button onclick="showModal()" type="button"
-        class="my-3 inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">Add Links</button>
+            class="my-3 inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+            Add Links
+        </button>
+
+        <button type="button" onclick="deleteLink" id="deleteLink"
+            class="my-3 inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-red-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+            Delete Selected
+        </button>
+
         <a href="{{ route('allData.index') }}"
-        class="my-3 inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">All Data</a>
+            class="my-3 inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+            All Data
+        </a>
+
     </div>
 
     <x-model>
@@ -40,13 +51,12 @@
                         'autocomplete' => 'off',
                     ],
                 ],
-            ]"
-            :submit="[
+            ]" :submit="[
                 'text' => 'Submit',
                 'attributes' => [
                     'class' =>
                         'px-5 py-2.5 !mt-8 w-full bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg tracking-wide',
-                ]
+                ],
             ]"></x-form>
         </div>
     </x-model>
@@ -83,11 +93,11 @@
 
                 @foreach ($allLinks as $key => $link)
                     <tr
-                        class="{{ $link->check == 'valid' ? 'bg-white' : 'bg-red-500' }}  border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                        class="{{ $link->check == 'valid' ? 'bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700' : 'bg-red-500 dark:bg-red-800 dark:hover:bg-red-600 dark:border-red-700' }}  border-b">
                         <td class="w-4 p-4">
                             <div class="flex items-center">
                                 <input value="{{ $link->id }}" name="linkId[]" type="checkbox"
-                                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 link-checkbox">
+                                    class="link-checkbox w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 ">
                                 <label class="sr-only">checkbox</label>
                             </div>
                         </td>
@@ -108,7 +118,8 @@
                         <td class="flex items-center px-6 py-4">
                             <x-form method="DELETE" action="{{ route('allLink.destroy', $link->id) }}">
                                 <button class="mr-4" title="Delete">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 fill-red-500 hover:fill-red-700"
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                        class="w-5 dark:hover:fill-white fill-red-500 hover:fill-red-700"
                                         viewBox="0 0 24 24">
                                         <path
                                             d="M19 7a1 1 0 0 0-1 1v11.191A1.92 1.92 0 0 1 15.99 21H8.01A1.92 1.92 0 0 1 6 19.191V8a1 1 0 0 0-2 0v11.191A3.918 3.918 0 0 0 8.01 23h7.98A3.918 3.918 0 0 0 20 19.191V8a1 1 0 0 0-1-1Zm1-3h-4V2a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v2H4a1 1 0 0 0 0 2h16a1 1 0 0 0 0-2ZM10 4V3h4v1Z"
@@ -128,16 +139,73 @@
         {{ $allLinks->links() }}
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]')
+                .getAttribute('content');
+
+            let allVal = [];
             const checkAll = document.getElementById('checkAll');
             const checkboxes = document.querySelectorAll('.link-checkbox');
-
             checkAll.addEventListener('change', function() {
+                allVal = [];
                 checkboxes.forEach(checkbox => {
                     checkbox.checked = checkAll.checked;
+                    if (checkbox.checked) {
+                        allVal.push(checkbox.value)
+                    }
                 });
             });
+
+            // Individual checkbox change handler
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        allVal.push(this.value);
+                    } else {
+                        allVal = allVal.filter(id => id !== this.value);
+                    }
+                })
+            });
+
+            // const deleteLink = () => {
+            //     if (allVal.length === 0) {
+            //         alert('No links selected');
+            //         return;
+            //     }
+
+            //     // Convert string IDs to integers
+            //     const intIds = allVal.map(id => parseInt(id, 10));
+
+            //     console.log('IDs to delete:', intIds); // Check the IDs
+
+            //     axios.post("{{ route('allData.multiwork') }}", {
+            //             ids: intIds
+            //         }, {
+            //             headers: {
+            //                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+            //                     'content'),
+            //                 'Content-Type': 'application/json'
+            //             }
+            //         })
+            //         .then(response => {
+            //             console.log(response.data);
+            //             if (response.data.success) {
+            //                 alert('Links deleted successfully!');
+            //             } else {
+            //                 alert('Failed to delete links');
+            //             }
+            //         })
+            //         .catch(error => {
+            //             console.error(error);
+            //             alert('An error occurred');
+            //         });
+            // };
+
+
+            // document.getElementById('deleteLink').addEventListener('click', deleteLink);
         });
     </script>
     @vite(['resources/js/modal.js']);

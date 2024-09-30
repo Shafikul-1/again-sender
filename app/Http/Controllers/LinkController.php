@@ -6,12 +6,13 @@ use App\Models\AllLink;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class LinkController extends Controller
 {
     public function index()
     {
-        $allLinks = AllLink::paginate(20);
+        $allLinks = AllLink::where('user_id', Auth::user()->id)->orderByDesc('id')->paginate(25);
         return view('fbData.allLink', compact('allLinks'));
     }
 
@@ -67,9 +68,19 @@ class LinkController extends Controller
     // Multi work
     public function multiwork(Request $request)
     {
-        return $request;
-        // $deleteLink = AllLink::find($id)->delete();
-        // return $deleteLink ? redirect()->back()->with('success', 'link delete succesful') : redirect()->back()->with('error', 'Someting went wrong');
+        $validator = Validator::make($request->all(), [
+            'ids' => 'required|array',       // Ensure 'ids' is an array
+            'ids.*' => 'integer',             // Ensure each ID in the array is an integer
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422); // Return validation errors
+        }
+
+        // Proceed with deletion logic
+        AllLink::destroy($request->input('ids')); // Use destroy to delete multiple records
+
+        return response()->json(['success' => true, 'message' => 'Links deleted successfully']);
     }
 
     public function linkDelete()
