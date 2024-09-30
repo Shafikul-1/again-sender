@@ -24,6 +24,10 @@
                         {{ __('Sending Emails') }}
                     </x-nav-link>
 
+                    <x-nav-link :href="route('allLink.index')" :active="request()->routeIs('allLink.index')">
+                        {{ __('Data Collect') }}
+                    </x-nav-link>
+
                     <x-nav-link :href="route('user')" :active="request()->routeIs('user')">
                         {{ __('Profile Dashboard') }}
                     </x-nav-link>
