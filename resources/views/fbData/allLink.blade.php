@@ -1,9 +1,12 @@
 <x-app-layout>
     @section('title', 'All Link')
 
-    <button onclick="showModal()" type="button"
-        class="my-3 inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">Add
-        Links</button>
+    <div class="md:flex md:justify-self-stretch gap-4">
+        <button onclick="showModal()" type="button"
+        class="my-3 inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">Add Links</button>
+        <a href="#" onclick="showModal()" type="button"
+        class="my-3 inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">All Data</a>
+    </div>
 
     <x-model>
         <div class="w-full max-w-lg dark:bg-gray-800 shadow-indigo-400 bg-white shadow-lg rounded-lg p-8 relative">
