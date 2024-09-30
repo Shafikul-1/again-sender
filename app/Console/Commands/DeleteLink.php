@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Http\Controllers\LinkController;
+use App\Http\Controllers\fbData\LinkController;
 
 class DeleteLink extends Command
 {

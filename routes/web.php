@@ -1,12 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\LinkController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\CollectDataController;
+use App\Http\Controllers\fbData\LinkController;
 use App\Http\Controllers\mail\MailSetupController;
 use App\Http\Controllers\mail\SendingEmailController;
-use App\Http\Controllers\mail\MailDeliveryDetailsController;
+use App\Http\Controllers\fbData\CollectDataController;
 
 Route::get('/', function () {
     return view('welcome');

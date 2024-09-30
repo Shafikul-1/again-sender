@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Http\Controllers\CollectDataController;
+use App\Http\Controllers\fbData\CollectDataController;
 
 class DataCollect extends Command
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\fbData;
 
 use App\Models\AllLink;
 use App\Models\CollectData;
@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Jobs\DatasCollectJob;
 use App\Exports\ExportCollectData;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
