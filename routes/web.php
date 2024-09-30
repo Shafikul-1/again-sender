@@ -46,7 +46,16 @@ Route::post('multiwork', [SendingEmailController::class, 'multiwork'])->name('se
 Route::get('uploadFileDelete/{url}', [SendingEmailController::class, 'uploadFileDelete'])->name('sendingemails.uploadFileDelete')->middleware('auth');
 
 Route::middleware('auth')->group(function (){
-    Route::get('index', [CollectDataController::class, 'index'])->name('collectData.index');
+
+
+    // Collect Data All
+    Route::get('all-data', [CollectDataController::class, 'index'])->name('allData.index');
+    Route::get('all-data/collect', [CollectDataController::class, 'collectData'])->name('allData.collectData');
+    Route::get('all-data/destroy/{id}', [CollectDataController::class, 'destroy'])->name('allData.destroy');
+    Route::post('all-data/multiwork', [CollectDataController::class, 'multiwork'])->name('allData.multiwork');
+    Route::get('all-data/export', [CollectDataController::class, 'exportData'])->name('allData.export');
+
+    // Link All
     Route::get('all-link', [LinkController::class, 'index'])->name('allLink.index');
     Route::post('all-link/store', [LinkController::class, 'store'])->name('allLink.store');
     Route::delete('all-link/destroy/{id}', [LinkController::class, 'destroy'])->name('allLink.destroy');

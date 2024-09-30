@@ -1,24 +1,25 @@
 <x-app-layout>
     @section('title', 'Collect All Data')
+
+    <div class="md:flex md:justify-self-stretch gap-4">
+        <button o nclick="showModal()" type="button"
+            class="my-3 inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+            Add Links
+        </button>
+
+        <a href="{{ route('allData.index') }}"
+            class="my-3 inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+            All Data
+        </a>
+
+        <a href="{{ route('allData.export') }}" target="_blank"
+            class="my-3 inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+            Downlaod All Data
+        </a>
+    </div>
+
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-        <div class="pb-4 bg-white dark:bg-gray-900">
-            <label for="table-search" class="sr-only">Search</label>
-            <div class="relative mt-1">
-                <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
-                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                    </svg>
-                </div>
-                <input type="text" id="table-search"
-                    class="block pt-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Search for items">
-            </div>
-        </div>
-        <div class="">
-            <a href="{{ route('allData.export') }}" target="_blank" rel="noopener noreferrer"  class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded capitalize">downlaod</a>
-        </div>
+
         <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
@@ -49,26 +50,35 @@
                             <option value="complete" class="capitalize">complete</option>
                             <option value="delete" class="capitalize">delete</option>
                         </select>
-                        <button type="submit" class="capitalize dark:text-white font-bold text-3xl bg-gray-500 px-5 py-1 rounded-md my-2 hover:bg-gray-900 cursor-pointer">Submit</button>
+                        <button type="submit"
+                            class="capitalize dark:text-white font-bold text-3xl bg-gray-500 px-5 py-1 rounded-md my-2 hover:bg-gray-900 cursor-pointer">Submit</button>
                     </div>
                     @foreach ($allData as $key => $data)
-                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                        <tr
+                            class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                             <td class="w-4 p-4">
                                 <div class="flex items-center">
-                                    <input name="multiData[]" value="{{ $data->id }}" id="checkbox-table-search-{{ $data['id'] }}" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 link-checkbox">
-                                    <label for="checkbox-table-search-{{ $data['id'] }}" class="sr-only">Select</label>
+                                    <input name="multiData[]" value="{{ $data->id }}"
+                                        id="checkbox-table-search-{{ $data['id'] }}" type="checkbox"
+                                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 link-checkbox">
+                                    <label for="checkbox-table-search-{{ $data['id'] }}"
+                                        class="sr-only">Select</label>
                                 </div>
                             </td>
-                            <td class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer">
+                            <td
+                                class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer">
                                 {{ $key + 1 }}
                             </td>
-                            <td class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer" onclick="selectAndCopy(this)">
+                            <td class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer"
+                                onclick="selectAndCopy(this)">
                                 {{ $data['allInfo']['postDetails']['name'] ?? 'N/A' }}
                             </td>
-                            <td class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer" onclick="selectAndCopy(this)">
+                            <td class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer"
+                                onclick="selectAndCopy(this)">
                                 {{ $data['allInfo']['postDetails']['timeText'] ?? 'N/A' }}
                             </td>
-                            <td class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer" onclick="selectAndCopy(this)">
+                            <td class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer"
+                                onclick="selectAndCopy(this)">
                                 @if (!empty($data['allInfo']['postDetails']['url']))
                                     {{-- <a href="{{ $data['allInfo']['postDetails']['url'] }}" class="text-blue-600 dark:text-blue-500" target="_blank" rel="noopener noreferrer"></a> --}}
                                     {{ $data['allInfo']['postDetails']['url'] }}
@@ -76,13 +86,16 @@
                                     N/A
                                 @endif
                             </td>
-                            <td class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer" onclick="selectAndCopy(this)">
+                            <td class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer"
+                                onclick="selectAndCopy(this)">
                                 {{ $data['allInfo']['contactDetails']['Website'] ?? 'N/A' }}
                             </td>
-                            <td class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer" onclick="selectAndCopy(this)">
+                            <td class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer"
+                                onclick="selectAndCopy(this)">
                                 {{ $data['allInfo']['contactDetails']['Address'] ?? 'N/A' }}
                             </td>
-                            <td class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer" onclick="selectAndCopy(this)">
+                            <td class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer"
+                                onclick="selectAndCopy(this)">
                                 @php
                                     $mobile = $data['allInfo']['contactDetails']['Mobile'] ?? 'N/A';
                                     if (Str::startsWith($mobile, '+')) {
@@ -91,10 +104,11 @@
                                 @endphp
                                 {{ $mobile }}
                             </td>
-                            <td class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer" onclick="selectAndCopy(this)">
+                            <td class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer"
+                                onclick="selectAndCopy(this)">
                                 @php
                                     $WA = $data['allInfo']['contactDetails']['Mobile'] ?? 'N/A';
-                                    if($WA != 'N/A'){
+                                    if ($WA != 'N/A') {
                                         $WA = preg_replace('/[^\d+]/', '', $mobile);
                                         $WA = 'https://wa.me/+' . $WA;
                                     }
@@ -102,10 +116,12 @@
                                 {{ $WA }}
                             </td>
 
-                            <td class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer" onclick="selectAndCopy(this)">
+                            <td class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer"
+                                onclick="selectAndCopy(this)">
                                 {{ $data['allInfo']['contactDetails']['Email'] ?? 'N/A' }}
                             </td>
-                            <td class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer">
+                            <td
+                                class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer">
                                 {{ $data->status }}
                             </td>
                         </tr>
@@ -136,7 +152,7 @@
         const checkAll = document.getElementById('checkAll');
         const checkboxes = document.querySelectorAll('.link-checkbox');
 
-        checkAll.addEventListener('change', function () {
+        checkAll.addEventListener('change', function() {
             checkboxes.forEach(checkbox => {
                 checkbox.checked = checkAll.checked;
             });
