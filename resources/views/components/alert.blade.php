@@ -59,5 +59,5 @@
         <span class="text-sm font-semibold tracking-wide capitalize"> {{ $warning }} </span>
     </div>
     @endif
-
+{{ $slot }}
 </div>

@@ -139,12 +139,12 @@
         {{ $allLinks->links() }}
     </div>
 
+    <x-alert id="alertClose" onclick="alertClose()" :success="session('success')" :error="session('error')"></x-alert>
+
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]')
-                .getAttribute('content');
 
             let allVal = [];
             const checkAll = document.getElementById('checkAll');
@@ -170,42 +170,35 @@
                 })
             });
 
-            // const deleteLink = () => {
-            //     if (allVal.length === 0) {
-            //         alert('No links selected');
-            //         return;
-            //     }
+            const deleteLink = document.getElementById('deleteLink');
 
-            //     // Convert string IDs to integers
-            //     const intIds = allVal.map(id => parseInt(id, 10));
+            deleteLink.addEventListener('click', function() {
+                if (allVal.length > 0) {
+                    axios.post('{{ route('allData.multiwork') }}', {
+                            linkIds: allVal, // Send the selected IDs
+                        })
+                        .then(response => {
+                            if (response.status == 200) {
+                                allVal.forEach(id => {
+                                    const checkbox = document.querySelector(
+                                        `input[value="${id}"]`);
+                                    if (checkbox) {
+                                        checkbox.closest('tr').remove();
+                                    }
+                                });
+                                allVal = [];
+                            } else{
+                                alert('Someting went worng please try again');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error deleting links:', error.message);
+                        });
+                } else {
+                    alert('Please select at least one link to delete.');
+                }
+            });
 
-            //     console.log('IDs to delete:', intIds); // Check the IDs
-
-            //     axios.post("{{ route('allData.multiwork') }}", {
-            //             ids: intIds
-            //         }, {
-            //             headers: {
-            //                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-            //                     'content'),
-            //                 'Content-Type': 'application/json'
-            //             }
-            //         })
-            //         .then(response => {
-            //             console.log(response.data);
-            //             if (response.data.success) {
-            //                 alert('Links deleted successfully!');
-            //             } else {
-            //                 alert('Failed to delete links');
-            //             }
-            //         })
-            //         .catch(error => {
-            //             console.error(error);
-            //             alert('An error occurred');
-            //         });
-            // };
-
-
-            // document.getElementById('deleteLink').addEventListener('click', deleteLink);
         });
     </script>
     @vite(['resources/js/modal.js']);
