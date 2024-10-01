@@ -38,6 +38,8 @@ class SendingEmailJob implements ShouldQueue
 
             $originalMailConfig = config('mail');
 
+            Log::info('Original Mail Configuration: ', $originalMailConfig);
+
             config([
                 'mail.default' => $mailConfigData->mail_transport,
                 'mail.mailers.' . $mailConfigData->mail_transport => [
@@ -70,6 +72,8 @@ class SendingEmailJob implements ShouldQueue
                 $status = false;
                 Log::error('Queue Work Error => ' . $e->getMessage());
             }
+
+            Log::info('Updated Mail Configuration: ', config('mail'));
 
             config(['mail' => $originalMailConfig]);
 

@@ -117,7 +117,7 @@ class SendingEmailController extends Controller
         if ($request->has('mail_files')) {
             $request->validate([
                 'mail_files' => 'required|array',
-                'mail_files.*' => 'file|mimes:jpg,jpeg,png,pdf,doc,docx|max:10100',
+                'mail_files.*' => 'file|mimes:jpg,jpeg,png,pdf,webp,gif,avif,jfif|max:10100',
             ]);
             foreach ($request->mail_files as $files) {
                 $ext = $files->getClientOriginalExtension();
@@ -266,7 +266,7 @@ class SendingEmailController extends Controller
         if ($request->has('mail_files')) {
             $request->validate([
                 'mail_files' => 'required|array',
-                'mail_files.*' => 'file|mimes:jpg,jpeg,png,pdf,doc,docx,webp,gif|max:10100',
+                'mail_files.*' => 'file|mimes:jpg,jpeg,png,pdf,webp,gif,avif,jfif|max:10100',
             ]);
 
             foreach ($request->mail_files as $files) {
