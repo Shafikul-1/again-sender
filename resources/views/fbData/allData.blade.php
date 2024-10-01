@@ -12,10 +12,10 @@
             Downlaod All Data
         </a>
 
-        <a href="{{ route('allData.multiwork') }}"
+        <button type="button" id="deleteLink"
             class="my-3 inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-red-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
             Delete Selected
-        </a>
+        </button>
     </div>
 
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -43,91 +43,79 @@
                 </tr>
             </thead>
             <tbody>
-                <form action="{{ route('allData.multiwork') }}" method="post">
-                    @csrf
-                    <div class="flex gap-4 my-4">
-                        <select name="action" id="" class="">
-                            <option value="complete" class="capitalize">complete</option>
-                            <option value="delete" class="capitalize">delete</option>
-                        </select>
-                        <button type="submit"
-                            class="capitalize dark:text-white font-bold text-3xl bg-gray-500 px-5 py-1 rounded-md my-2 hover:bg-gray-900 cursor-pointer">Submit</button>
-                    </div>
-                    @foreach ($allData as $key => $data)
-                        <tr
-                            class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                            <td class="w-4 p-4">
-                                <div class="flex items-center">
-                                    <input name="multiData[]" value="{{ $data->id }}"
-                                        id="checkbox-table-search-{{ $data['id'] }}" type="checkbox"
-                                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 link-checkbox">
-                                    <label for="checkbox-table-search-{{ $data['id'] }}"
-                                        class="sr-only">Select</label>
-                                </div>
-                            </td>
-                            <td
-                                class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer">
-                                {{ $key + 1 }}
-                            </td>
-                            <td class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer"
-                                onclick="selectAndCopy(this)">
-                                {{ $data['allInfo']['postDetails']['name'] ?? 'N/A' }}
-                            </td>
-                            <td class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer"
-                                onclick="selectAndCopy(this)">
-                                {{ $data['allInfo']['postDetails']['timeText'] ?? 'N/A' }}
-                            </td>
-                            <td class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer"
-                                onclick="selectAndCopy(this)">
-                                @if (!empty($data['allInfo']['postDetails']['url']))
-                                    {{-- <a href="{{ $data['allInfo']['postDetails']['url'] }}" class="text-blue-600 dark:text-blue-500" target="_blank" rel="noopener noreferrer"></a> --}}
-                                    {{ $data['allInfo']['postDetails']['url'] }}
-                                @else
-                                    N/A
-                                @endif
-                            </td>
-                            <td class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer"
-                                onclick="selectAndCopy(this)">
-                                {{ $data['allInfo']['contactDetails']['Website'] ?? 'N/A' }}
-                            </td>
-                            <td class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer"
-                                onclick="selectAndCopy(this)">
-                                {{ $data['allInfo']['contactDetails']['Address'] ?? 'N/A' }}
-                            </td>
-                            <td class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer"
-                                onclick="selectAndCopy(this)">
-                                @php
-                                    $mobile = $data['allInfo']['contactDetails']['Mobile'] ?? 'N/A';
-                                    if (Str::startsWith($mobile, '+')) {
-                                        $mobile = substr($mobile, 1);
-                                    }
-                                @endphp
-                                {{ $mobile }}
-                            </td>
-                            <td class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer"
-                                onclick="selectAndCopy(this)">
-                                @php
-                                    $WA = $data['allInfo']['contactDetails']['Mobile'] ?? 'N/A';
-                                    if ($WA != 'N/A') {
-                                        $WA = preg_replace('/[^\d+]/', '', $mobile);
-                                        $WA = 'https://wa.me/+' . $WA;
-                                    }
-                                @endphp
-                                {{ $WA }}
-                            </td>
+                @foreach ($allData as $key => $data)
+                    <tr
+                        class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                        <td class="w-4 p-4">
+                            <div class="flex items-center">
+                                <input value="{{ $data->id }}" name="linkId[]" type="checkbox"
+                                    id="checkbox-table-search-{{ $data['id'] }}"
+                                    class="link-checkbox w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 link-checkbox">
+                                <label for="checkbox-table-search-{{ $data['id'] }}" class="sr-only">Select</label>
+                            </div>
+                        </td>
+                        <td
+                            class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer">
+                            {{ $key + 1 }}
+                        </td>
+                        <td class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer"
+                            onclick="selectAndCopy(this)">
+                            {{ $data['allInfo']['postDetails']['name'] ?? 'N/A' }}
+                        </td>
+                        <td class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer"
+                            onclick="selectAndCopy(this)">
+                            {{ $data['allInfo']['postDetails']['timeText'] ?? 'N/A' }}
+                        </td>
+                        <td class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer"
+                            onclick="selectAndCopy(this)">
+                            @if (!empty($data['allInfo']['postDetails']['url']))
+                                {{-- <a href="{{ $data['allInfo']['postDetails']['url'] }}" class="text-blue-600 dark:text-blue-500" target="_blank" rel="noopener noreferrer"></a> --}}
+                                {{ $data['allInfo']['postDetails']['url'] }}
+                            @else
+                                N/A
+                            @endif
+                        </td>
+                        <td class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer"
+                            onclick="selectAndCopy(this)">
+                            {{ $data['allInfo']['contactDetails']['Website'] ?? 'N/A' }}
+                        </td>
+                        <td class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer"
+                            onclick="selectAndCopy(this)">
+                            {{ $data['allInfo']['contactDetails']['Address'] ?? 'N/A' }}
+                        </td>
+                        <td class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer"
+                            onclick="selectAndCopy(this)">
+                            @php
+                                $mobile = $data['allInfo']['contactDetails']['Mobile'] ?? 'N/A';
+                                if (Str::startsWith($mobile, '+')) {
+                                    $mobile = substr($mobile, 1);
+                                }
+                            @endphp
+                            {{ $mobile }}
+                        </td>
+                        <td class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer"
+                            onclick="selectAndCopy(this)">
+                            @php
+                                $WA = $data['allInfo']['contactDetails']['Mobile'] ?? 'N/A';
+                                if ($WA != 'N/A') {
+                                    $WA = preg_replace('/[^\d+]/', '', $mobile);
+                                    $WA = 'https://wa.me/+' . $WA;
+                                }
+                            @endphp
+                            {{ $WA }}
+                        </td>
 
-                            <td class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer"
-                                onclick="selectAndCopy(this)">
-                                {{ $data['allInfo']['contactDetails']['Email'] ?? 'N/A' }}
-                            </td>
-                            <td
-                                class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer">
-                                {{ $data->status }}
-                            </td>
-                        </tr>
-                    @endforeach
+                        <td class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer"
+                            onclick="selectAndCopy(this)">
+                            {{ $data['allInfo']['contactDetails']['Email'] ?? 'N/A' }}
+                        </td>
+                        <td
+                            class="px-6 py-4 max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer">
+                            {{ $data->status }}
+                        </td>
+                    </tr>
+                @endforeach
 
-                </form>
             </tbody>
         </table>
         {{ $allData->links() }}
@@ -149,13 +137,62 @@
             });
         }
 
-        const checkAll = document.getElementById('checkAll');
-        const checkboxes = document.querySelectorAll('.link-checkbox');
+        document.addEventListener('DOMContentLoaded', function() {
 
-        checkAll.addEventListener('change', function() {
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = checkAll.checked;
+            let allVal = [];
+            const checkAll = document.getElementById('checkAll');
+            const checkboxes = document.querySelectorAll('.link-checkbox');
+            checkAll.addEventListener('change', function() {
+                allVal = [];
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = checkAll.checked;
+                    if (checkbox.checked) {
+                        allVal.push(checkbox.value)
+                    }
+                });
             });
+
+            // Individual checkbox change handler
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        allVal.push(this.value);
+                    } else {
+                        allVal = allVal.filter(id => id !== this.value);
+                    }
+                })
+            });
+
+            const deleteLink = document.getElementById('deleteLink');
+
+            deleteLink.addEventListener('click', function() {
+                if (allVal.length > 0) {
+                    axios.post('{{ route('allData.multiwork') }}', {
+                            linkIds: allVal,
+                            // _token: document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        })
+                        .then(response => {
+                            if (response.status == 200) {
+                                allVal.forEach(id => {
+                                    const checkbox = document.querySelector(
+                                        `input[value="${id}"]`);
+                                    if (checkbox) {
+                                        checkbox.closest('tr').remove();
+                                    }
+                                });
+                                allVal = [];
+                            } else {
+                                alert('Someting went worng please try again');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error deleting links:', error.message);
+                        });
+                } else {
+                    alert('Please select at least one link to delete.');
+                }
+            });
+
         });
     </script>
 </x-app-layout>

@@ -13,6 +13,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Validator;
 
 class CollectDataController extends Controller
 {
@@ -107,10 +108,19 @@ class CollectDataController extends Controller
     public function multiwork(Request $request)
     {
         // Log::info($request->all());
+        $validator = Validator::make($request->all(), [
+            'linkIds' => 'required|array',       // Ensure 'ids' is an array
+            'linkIds.*' => 'integer',             // Ensure each ID in the array is an integer
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422); // Return validation errors
+        }
+
         $linkIds = $request->input('linkIds');
 
         if ($linkIds) {
-            AllLink::whereIn('id', $linkIds)->delete();
+            CollectData::whereIn('id', $linkIds)->delete();
         }
 
         return response()->json(['success' => 'Links deleted successfully.']);

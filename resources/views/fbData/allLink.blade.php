@@ -173,8 +173,8 @@
 
             deleteLink.addEventListener('click', function() {
                 if (allVal.length > 0) {
-                    axios.post('{{ route('allData.multiwork') }}', {
-                            linkIds: allVal,
+                    axios.post('{{ route('allLink.multiwork') }}', {
+                            ids: allVal,
                             // _token: document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                         })
                         .then(response => {
@@ -187,7 +187,7 @@
                                     }
                                 });
                                 allVal = [];
-                            } else{
+                            } else {
                                 alert('Someting went worng please try again');
                             }
                         })

@@ -57,11 +57,12 @@ Route::middleware('auth')->group(function (){
     // Link All
     Route::get('all-link', [LinkController::class, 'index'])->name('allLink.index');
     Route::post('all-link/store', [LinkController::class, 'store'])->name('allLink.store');
+    Route::post('all-link/multiwork', [LinkController::class, 'multiwork'])->name('allLink.multiwork');
     Route::delete('all-link/destroy/{id}', [LinkController::class, 'destroy'])->name('allLink.destroy');
 });
 
 
-Route::get('check', [SendingEmailController::class, 'checkTime']);
+// Route::get('check', [SendingEmailController::class, 'checkTime']);
 
 
 require __DIR__.'/auth.php';
