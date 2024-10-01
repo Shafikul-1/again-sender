@@ -61,9 +61,7 @@ Route::middleware('auth')->group(function (){
 });
 
 
-Route::get('check', function (){
-    return view('mail.template');
-});
+Route::get('check', [SendingEmailController::class, 'checkTime']);
 
 
 require __DIR__.'/auth.php';

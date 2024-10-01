@@ -373,36 +373,37 @@ class SendingEmailController extends Controller
     public function checkTime()
     {
         $currentTime = Carbon::now();
-
-        $overSendTime = SendingEmail::where('send_time', '<=', $currentTime)->get();
+        $overSendTime = SendingEmail::where('send_time', '<=', $currentTime)
+            ->where('status', 'noaction')
+            ->get();
 
         DB::beginTransaction();
+        $previseSenderEmail = null;
+        $previseSendTime = null;
+
         try {
             foreach ($overSendTime as $email) {
-                $newSendTime = $currentTime->copy()->addMinutes($email->wait_minute);
+                $currentSenderEmail = $email->mail_form;
+
+                if ($previseSenderEmail === $currentSenderEmail && $previseSendTime) {
+                    $newSendTime = $previseSendTime->copy()->addMinutes($email->wait_minute);
+                } else {
+                    $newSendTime = $currentTime->copy()->addMinutes($email->wait_minute);
+                }
 
                 $email->update(['send_time' => $newSendTime]);
+
+                $previseSenderEmail = $currentSenderEmail;
+                $previseSendTime = $newSendTime;
             }
+
             DB::commit();
+            return "Time Update Successful";
         } catch (Throwable $th) {
             DB::rollBack();
             Log::error('Check Time Error => ' . $th->getMessage());
             return "Error occurred while updating send times.";
         }
-
-        return "Time Update Successful";
-        /*
-        $currentTime = now();
-        $overSendTime  = SendingEmail::where('send_time', '<=', $currentTime)->get();
-        foreach ($overSendTime as $key => $value) {
-            try {
-                SendingEmail::where('id', $value->id)->update(['send_time' => $currentTime->addMinutes($value->wait_minute)]);
-            } catch (Throwable $th) {
-                Log::error('Check Time Error => ' . $th->getMessage());
-            }
-        }
-        return "Time Update Successful";
-*/
     }
 
     /**
