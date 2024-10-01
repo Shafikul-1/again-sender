@@ -106,10 +106,11 @@ class CollectDataController extends Controller
 
     public function multiwork(Request $request)
     {
-        $linkIds = $request->input('linkIds'); // Get the array of IDs
+        // Log::info($request->all());
+        $linkIds = $request->input('linkIds');
 
         if ($linkIds) {
-            AllLink::whereIn('id ', $linkIds)->delete();
+            AllLink::whereIn('id', $linkIds)->delete();
         }
 
         return response()->json(['success' => 'Links deleted successfully.']);

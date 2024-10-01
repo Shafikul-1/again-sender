@@ -103,7 +103,7 @@
                         </td>
                         <th scope="row"
                             class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            {{ $link->id }}
+                            {{ $key + 1 }}
                         </th>
                         <th scope="row"
                             class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
@@ -139,7 +139,6 @@
         {{ $allLinks->links() }}
     </div>
 
-    <x-alert id="alertClose" onclick="alertClose()" :success="session('success')" :error="session('error')"></x-alert>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
@@ -175,7 +174,8 @@
             deleteLink.addEventListener('click', function() {
                 if (allVal.length > 0) {
                     axios.post('{{ route('allData.multiwork') }}', {
-                            linkIds: allVal, // Send the selected IDs
+                            linkIds: allVal,
+                            // _token: document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                         })
                         .then(response => {
                             if (response.status == 200) {
