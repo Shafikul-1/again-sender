@@ -108,5 +108,9 @@ class SendingEmailJob implements ShouldQueue
     public function failed(Throwable $exception)
     {
         Log::error('Email job failed: ' . $exception->getMessage());
+
+        foreach ($this->sendingEmails as $emails) {
+            SendingEmail::where('id', $emails->id)->update(['status' => 'fail']);
+        }
     }
 }
