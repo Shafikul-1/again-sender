@@ -14,6 +14,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Mail\MailManager;
 
 class SendingEmailJob implements ShouldQueue
 {
@@ -38,7 +39,13 @@ class SendingEmailJob implements ShouldQueue
 
             $originalMailConfig = config('mail');
 
-            Log::info('Original Mail Configuration: ', $originalMailConfig);
+            // Log::info('Original Mail Configuration: ', $originalMailConfig);
+            Log::info('Email check - BEFORE config', [
+                'To' => $emails->mails,
+                'mailAddress' => config('mail.from.address'), // Will be empty
+                'mailMailersUsername' => config('mail.mailers.' . $mailConfigData->mail_transport . '.username'), // Will be empty
+            ]);
+
 
             config([
                 'mail.default' => $mailConfigData->mail_transport,
@@ -54,6 +61,12 @@ class SendingEmailJob implements ShouldQueue
                     'address' => $mailConfigData->mail_from,
                     'name' => $mailConfigData->mail_sender_name,
                 ],
+            ]);
+            app()->make(MailManager::class)->forgetMailers();
+            Log::info('Email check - AFTER config', [
+                'To' => $emails->mails,
+                'mailAddress' => config('mail.from.address'), // Should now be set
+                'mailMailersUsername' => config('mail.mailers.' . $mailConfigData->mail_transport . '.username'), // Should now be set
             ]);
 
             $status = false;
@@ -72,12 +85,28 @@ class SendingEmailJob implements ShouldQueue
                 $status = false;
                 Log::error('Queue Work Error => ' . $e->getMessage());
             }
+            Log::info('Email check - END config', [
+                'To' => $emails->mails,
+                'mailAddress' => config('mail.from.address'), // Should now be set
+                'mailMailersUsername' => config('mail.mailers.' . $mailConfigData->mail_transport . '.username'), // Should now be set
+            ]);
 
-            Log::info('Updated Mail Configuration: ', config('mail'));
+            //Log::info('Updated Mail Configuration: ', config('mail'));
 
             config(['mail' => $originalMailConfig]);
 
             SendingEmail::where('id', $emails->id)->update(['status' => $status ? 'success' : 'fail']);
         }
+    }
+
+    /**
+     * Handle a job failure.
+     *
+     * @param Throwable $exception
+     * @return void
+     */
+    public function failed(Throwable $exception)
+    {
+        Log::error('Email job failed: ' . $exception->getMessage());
     }
 }
