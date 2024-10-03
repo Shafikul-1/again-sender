@@ -339,7 +339,7 @@ class SendingEmailController extends Controller
     public function sendingEmails()
     {
         $currentTime = Carbon::now();
-        $allEmails = SendingEmail::with('mail_content')->where('send_time', '<=', $currentTime)->where('status', 'noaction')->limit(10) ->get();
+        $allEmails = SendingEmail::with('mail_content')->where('send_time', '<=', $currentTime)->whereIn('status', ['noaction', 'fail'])->limit(10) ->get();
         // return $allEmails;
         try {
             if ($allEmails->isNotEmpty()) {
@@ -374,7 +374,7 @@ class SendingEmailController extends Controller
     {
         $currentTime = Carbon::now();
         $overSendTime = SendingEmail::where('send_time', '<=', $currentTime)
-            ->where('status', 'noaction')
+            ->whereIn('status', ['noaction', 'fail'])
             ->get();
 
         DB::beginTransaction();

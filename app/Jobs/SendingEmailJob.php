@@ -20,7 +20,10 @@ class SendingEmailJob implements ShouldQueue
 {
     use Queueable, InteractsWithQueue, SerializesModels, Dispatchable;
 
+    public $tries = 3;
+    public $retryAfter = 20;
     protected $sendingEmails;
+
     /**
      * Create a new job instance.
      */
@@ -35,17 +38,22 @@ class SendingEmailJob implements ShouldQueue
     public function handle(): void
     {
         foreach ($this->sendingEmails as $emails) {
-            $mailConfigData = MailSetup::find($emails->mailsetup_id);
 
+            // IF Job Fail then again check
+            $againCheck = SendingEmail::where('mails', $emails->mails)->where('mail_form', $emails->mail_form)->where('status', 'success')->where('send_time', $emails->send_time)->where('user_id', $emails->user_id)->exists();
+            if($againCheck){
+                continue;
+            }
+
+            $mailConfigData = MailSetup::find($emails->mailsetup_id);
             $originalMailConfig = config('mail');
 
-            // Log::info('Original Mail Configuration: ', $originalMailConfig);
+            // Log BEFORE config
             Log::info('Email check - BEFORE config', [
                 'To' => $emails->mails,
-                'mailAddress' => config('mail.from.address'), // Will be empty
-                'mailMailersUsername' => config('mail.mailers.' . $mailConfigData->mail_transport . '.username'), // Will be empty
+                'mailAddress' => config('mail.from.address'),
+                'mailMailersUsername' => config('mail.mailers.' . $mailConfigData->mail_transport . '.username'),
             ]);
-
 
             config([
                 'mail.default' => $mailConfigData->mail_transport,
@@ -62,11 +70,14 @@ class SendingEmailJob implements ShouldQueue
                     'name' => $mailConfigData->mail_sender_name,
                 ],
             ]);
+
+            // Email Configer Reset
             app()->make(MailManager::class)->forgetMailers();
+
             Log::info('Email check - AFTER config', [
                 'To' => $emails->mails,
-                'mailAddress' => config('mail.from.address'), // Should now be set
-                'mailMailersUsername' => config('mail.mailers.' . $mailConfigData->mail_transport . '.username'), // Should now be set
+                'mailAddress' => config('mail.from.address'),
+                'mailMailersUsername' => config('mail.mailers.' . $mailConfigData->mail_transport . '.username'),
             ]);
 
             $status = false;
@@ -79,22 +90,23 @@ class SendingEmailJob implements ShouldQueue
                     'sender_department' => $mailConfigData->sender_department,
                     'sender_company_logo' => $mailConfigData->sender_company_logo,
                 ];
+
                 Mail::to($emails->mails)->send(new SendingEmailMail($emails->mail_content[0], $senderDefultData, $mailConfigData->other_links));
                 $status = true;
+
             } catch (Throwable $e) {
                 $status = false;
                 Log::error('Queue Work Error => ' . $e->getMessage());
             }
+
+            // Log END config
             Log::info('Email check - END config', [
                 'To' => $emails->mails,
-                'mailAddress' => config('mail.from.address'), // Should now be set
-                'mailMailersUsername' => config('mail.mailers.' . $mailConfigData->mail_transport . '.username'), // Should now be set
+                'mailAddress' => config('mail.from.address'),
+                'mailMailersUsername' => config('mail.mailers.' . $mailConfigData->mail_transport . '.username'),
             ]);
 
-            //Log::info('Updated Mail Configuration: ', config('mail'));
-
             config(['mail' => $originalMailConfig]);
-
             SendingEmail::where('id', $emails->id)->update(['status' => $status ? 'success' : 'fail']);
         }
     }
@@ -107,10 +119,10 @@ class SendingEmailJob implements ShouldQueue
      */
     public function failed(Throwable $exception)
     {
-        Log::error('Email job failed: ' . $exception->getMessage());
+        // Log::error('Email job failed: ' . $exception->getMessage());
 
         foreach ($this->sendingEmails as $emails) {
-            SendingEmail::where('id', $emails->id)->update(['status' => 'fail']);
+            SendingEmail::where('id', $emails->id)->where('status', 'pending')->update(['status' => 'fail']);
         }
     }
 }
