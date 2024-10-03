@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('mails');
             $table->string('mail_form');
-            $table->enum('status', ['noaction', 'pending', 'netdisable', 'fail', 'success'])->default('noaction');
+            $table->enum('status', ['noaction', 'pending', 'processing', 'fail', 'success'])->default('noaction');
             $table->timestamp('send_time');
             $table->integer('wait_minute')->default(0);
             $table->foreignId('mail_content_id')->references('id')->on('mail_contents')->cascadeOnDelete();

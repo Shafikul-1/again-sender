@@ -40,8 +40,14 @@ class SendingEmailJob implements ShouldQueue
         foreach ($this->sendingEmails as $emails) {
 
             // IF Job Fail then again check
-            $againCheck = SendingEmail::where('mails', $emails->mails)->where('mail_form', $emails->mail_form)->where('status', 'success')->where('send_time', $emails->send_time)->where('user_id', $emails->user_id)->exists();
-            if($againCheck){
+            $query = SendingEmail::query();
+            $againCheck = $query->where('mails', $emails->mails)
+                ->where('mail_form', $emails->mail_form)
+                ->whereIn('status', ['success', 'processing'])
+                ->where('send_time', $emails->send_time)
+                ->where('user_id', $emails->user_id)
+                ->exists();
+            if ($againCheck) {
                 continue;
             }
 
@@ -91,9 +97,10 @@ class SendingEmailJob implements ShouldQueue
                     'sender_company_logo' => $mailConfigData->sender_company_logo,
                 ];
 
-                Mail::to($emails->mails)->send(new SendingEmailMail($emails->mail_content[0], $senderDefultData, $mailConfigData->other_links));
+                SendingEmail::where('id', $emails->id)->update(['status' => 'processing']);
+                sleep(30);
+                //Mail::to($emails->mails)->send(new SendingEmailMail($emails->mail_content[0], $senderDefultData, $mailConfigData->other_links));
                 $status = true;
-
             } catch (Throwable $e) {
                 $status = false;
                 Log::error('Queue Work Error => ' . $e->getMessage());
@@ -119,7 +126,7 @@ class SendingEmailJob implements ShouldQueue
      */
     public function failed(Throwable $exception)
     {
-        // Log::error('Email job failed: ' . $exception->getMessage());
+        Log::error('Email job failed: ' . $exception->getMessage());
 
         foreach ($this->sendingEmails as $emails) {
             SendingEmail::where('id', $emails->id)->where('status', 'pending')->update(['status' => 'fail']);
