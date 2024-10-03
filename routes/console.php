@@ -12,6 +12,6 @@ Schedule::command('app:data-collect')->everyFourMinutes();
 Schedule::command('app:delete-link')->everyTenMinutes();
 Schedule::command('app:delete-limit')->everyThirtyMinutes();
 
-// Schedule::command('app:process-emails')->everyMinute();
+Schedule::command('app:process-emails')->everyMinute();
 Schedule::command('queue:work --stop-when-empty')->everyMinute();
 Schedule::command('queue:retry all')->everyThirtyMinutes();

@@ -351,6 +351,7 @@ class SendingEmailController extends Controller
             }
         } catch (Throwable $th) {
             Log::error("Email Dispatch Error SendingEmailController => " . $th->getMessage());
+            return 'Error';
         }
     }
     // SendingEmail::with('mail_content')
