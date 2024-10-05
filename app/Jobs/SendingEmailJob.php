@@ -6,6 +6,7 @@ use Throwable;
 use App\Models\MailSetup;
 use App\Models\SendingEmail;
 use App\Mail\SendingEmailMail;
+use App\Models\MailContent;
 use App\Models\MailDelivaryDetail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -20,8 +21,6 @@ class SendingEmailJob implements ShouldQueue
 {
     use Queueable, InteractsWithQueue, SerializesModels, Dispatchable;
 
-    public $tries = 3;
-    public $retryAfter = 20;
     protected $sendingEmails;
 
     /**
@@ -39,9 +38,11 @@ class SendingEmailJob implements ShouldQueue
     {
         foreach ($this->sendingEmails as $emails) {
 
+            $mailContent = MailContent::find($emails->mail_content_id);
+
             // IF Job Fail then again check
-            $query = SendingEmail::query();
-            $againCheck = $query->where('mails', $emails->mails)
+
+            $againCheck = SendingEmail::where('mails', $emails->mails)
                 ->where('mail_form', $emails->mail_form)
                 ->whereIn('status', ['success', 'processing'])
                 ->where('send_time', $emails->send_time)
@@ -80,13 +81,15 @@ class SendingEmailJob implements ShouldQueue
             // Email Configer Reset
             app()->make(MailManager::class)->forgetMailers();
 
-            Log::info('Email check - AFTER config', [
+            Log::info('<<AFTER>> ', [
                 'To' => $emails->mails,
                 'mailAddress' => config('mail.from.address'),
                 'mailMailersUsername' => config('mail.mailers.' . $mailConfigData->mail_transport . '.username'),
             ]);
 
             $status = false;
+            SendingEmail::where('id', $emails->id)->update(['status' => 'processing']);
+
             try {
                 $senderDefultData = [
                     'mail_sender_name' => $mailConfigData->mail_sender_name,
@@ -97,9 +100,8 @@ class SendingEmailJob implements ShouldQueue
                     'sender_company_logo' => $mailConfigData->sender_company_logo,
                 ];
 
-                SendingEmail::where('id', $emails->id)->update(['status' => 'processing']);
-                sleep(30);
-                //Mail::to($emails->mails)->send(new SendingEmailMail($emails->mail_content[0], $senderDefultData, $mailConfigData->other_links));
+                sleep(20);
+                //Mail::to($emails->mails)->send(new SendingEmailMail($mailContent, $senderDefultData, $mailConfigData->other_links));
                 $status = true;
             } catch (Throwable $e) {
                 $status = false;
@@ -107,7 +109,7 @@ class SendingEmailJob implements ShouldQueue
             }
 
             // Log END config
-            Log::info('Email check - END config', [
+            Log::info('__END__ ', [
                 'To' => $emails->mails,
                 'mailAddress' => config('mail.from.address'),
                 'mailMailersUsername' => config('mail.mailers.' . $mailConfigData->mail_transport . '.username'),
