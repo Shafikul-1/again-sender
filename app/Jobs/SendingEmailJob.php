@@ -16,12 +16,14 @@ use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Mail\MailManager;
+use Illuminate\Support\Facades\Cache;
 
 class SendingEmailJob implements ShouldQueue
 {
     use Queueable, InteractsWithQueue, SerializesModels, Dispatchable;
 
     protected $sendingEmails;
+    protected $originalMailConfig;
 
     /**
      * Create a new job instance.
@@ -29,6 +31,7 @@ class SendingEmailJob implements ShouldQueue
     public function __construct($sendingEmails)
     {
         $this->sendingEmails = $sendingEmails;
+        $this->originalMailConfig = config('mail');
     }
 
     /**
@@ -38,7 +41,13 @@ class SendingEmailJob implements ShouldQueue
     {
         foreach ($this->sendingEmails as $emails) {
 
-            $originalMailConfig = config('mail');
+            $lockKey = 'email_job_lock_' . $emails->id;
+            if(Cache::has($lockKey)){
+                Log::info("Email job is already running for ID: " . $emails->id);
+                continue;
+            }
+            Cache::put($lockKey, true, 300);
+
             $status = false;
 
             $againCheck = $this->checkDublicate($emails);
@@ -69,6 +78,8 @@ class SendingEmailJob implements ShouldQueue
             } catch (Throwable $e) {
                 $status = false;
                 Log::error('Queue Work Error => ' . $e->getMessage());
+            } finally{
+                Cache::forget($lockKey);
             }
 
             // // Log END config
@@ -78,7 +89,7 @@ class SendingEmailJob implements ShouldQueue
                 'mailMailersUsername' => config('mail.mailers.' . $mailConfigData->mail_transport . '.username'),
             ]);
 
-            config(['mail' => $originalMailConfig]);
+            config(['mail' => $this->originalMailConfig]);
             SendingEmail::where('id', $emails->id)->update(['status' => $status ? 'success' : 'fail']);
         }
     }
@@ -122,7 +133,7 @@ class SendingEmailJob implements ShouldQueue
                 ],
             ]);
 
-            // Email Config Reset
+            // Email Config Refresh
             app()->make(MailManager::class)->forgetMailers();
             Log::info('<<AFTER try>>', [
                 'To' => $emails->mails,
