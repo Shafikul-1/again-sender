@@ -72,14 +72,16 @@
                         case 'netdisable':
                             $statusColor = 'dark:bg-red-400 dark:hover:bg-red-400 text-black hover:text-white dark:hover:text-white';
                             break;
-
+                        case 'processing':
+                        $statusColor = 'animate-pulse bg-gradient-to-r from-pink-500 via-green-500 to-violet-500  text-white';
+                            break;
                         default:
                             $statusColor = 'dark:bg-gray-800 dark:hover:bg-gray-600';
                             break;
                     }
 
                 @endphp
-                    <tr class=" bg-white border-b  dark:border-gray-700 hover:bg-gray-50  {{ $statusColor }}">
+                    <tr class=" bg-white border-b  dark:border-gray-700 hover:bg-gray-50 {{ $statusColor }}">
                         <td class="w-4 p-4">
                             <div class="flex items-center">
                                 <input onclick="updateSelectedIds()" name="allId[]" value="{{ $email->id }}" id="emailContentCheckBox" type="checkbox"

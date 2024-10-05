@@ -46,7 +46,7 @@ class SendingEmailJob implements ShouldQueue
                 Log::info("Email job is already running for ID: " . $emails->id);
                 continue;
             }
-            Cache::put($lockKey, true, 300);
+            Cache::put($lockKey, true, 420);
 
             $status = false;
 
@@ -72,7 +72,7 @@ class SendingEmailJob implements ShouldQueue
                 'sender_company_logo' => $mailConfigData->sender_company_logo,
             ];
             try {
-                sleep(20);
+                Mail::to($emails->mails)->send(new SendingEmailMail($mailContent, $senderDefultData, $mailConfigData->other_links));
 
                 $status = true;
             } catch (Throwable $e) {
@@ -82,12 +82,12 @@ class SendingEmailJob implements ShouldQueue
                 Cache::forget($lockKey);
             }
 
-            // // Log END config
-            Log::info('__END__ ', [
-                'To' => $emails->mails,
-                'mailAddress' => config('mail.from.address'),
-                'mailMailersUsername' => config('mail.mailers.' . $mailConfigData->mail_transport . '.username'),
-            ]);
+            // // // Log END config
+            // Log::info('__END__ ', [
+            //     'To' => $emails->mails,
+            //     'mailAddress' => config('mail.from.address'),
+            //     'mailMailersUsername' => config('mail.mailers.' . $mailConfigData->mail_transport . '.username'),
+            // ]);
 
             config(['mail' => $this->originalMailConfig]);
             SendingEmail::where('id', $emails->id)->update(['status' => $status ? 'success' : 'fail']);
@@ -110,11 +110,11 @@ class SendingEmailJob implements ShouldQueue
     {
         $mailConfigData = MailSetup::find($emails->mailsetup_id);
 
-        Log::info('--BEFORE--', [
-            'To' => $emails->mails,
-            'mailAddress' => config('mail.from.address'),
-            'mailMailersUsername' => config('mail.mailers.' . $mailConfigData->mail_transport . '.username'),
-        ]);
+        // Log::info('--BEFORE--', [
+        //     'To' => $emails->mails,
+        //     'mailAddress' => config('mail.from.address'),
+        //     'mailMailersUsername' => config('mail.mailers.' . $mailConfigData->mail_transport . '.username'),
+        // ]);
 
         try {
             config([
@@ -135,11 +135,11 @@ class SendingEmailJob implements ShouldQueue
 
             // Email Config Refresh
             app()->make(MailManager::class)->forgetMailers();
-            Log::info('<<AFTER try>>', [
-                'To' => $emails->mails,
-                'mailAddress' => config('mail.from.address'),
-                'mailMailersUsername' => config('mail.mailers.' . $mailConfigData->mail_transport . '.username'),
-            ]);
+            // Log::info('<<AFTER try>>', [
+            //     'To' => $emails->mails,
+            //     'mailAddress' => config('mail.from.address'),
+            //     'mailMailersUsername' => config('mail.mailers.' . $mailConfigData->mail_transport . '.username'),
+            // ]);
 
             SendingEmail::where('id', $emails->id)->update(['status' => 'processing']);
             return $mailConfigData;
