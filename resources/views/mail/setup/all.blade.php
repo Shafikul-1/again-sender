@@ -46,6 +46,9 @@
                     <th class="p-4 text-sm font-semibold bg-yellow-700 text-white text-center">
                         Pending
                     </th>
+                    <th class="p-4 text-sm font-semibold  text-center animate-pulse bg-gradient-to-r from-pink-500 via-green-500 to-violet-500  text-black">
+                        Processing
+                    </th>
                     <th class="p-4 text-sm font-semibold bg-blue-100 text-black text-center">
                         No Action
                     </th>
@@ -94,6 +97,11 @@
                         <td class="text-center p-4 text-xs">
                             <a href="{{ route('sendingemails.index') . '?email=' . $mails->mail_from . '&status=pending' }}">
                                 <div class="mx-auto px-3 py-1 bg-yellow-700 w-max text-white rounded">{{ $mails->pending_count }}</div>
+                            </a>
+                        </td>
+                        <td class="text-center p-4 text-xs">
+                            <a href="{{ route('sendingemails.index') . '?email=' . $mails->mail_from . '&status=procesing' }}">
+                                <div class="mx-auto px-3 py-1 font-bold bg-[#8cf827da] w-max text-black rounded ">{{ $mails->pending_count }}</div>
                             </a>
                         </td>
                         <td class="text-center p-4 text-xs">
